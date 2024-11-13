@@ -24,12 +24,11 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             gapi.client.sheets.spreadsheets.values.get({
                 spreadsheetId: spreadsheetId,
-                range: 'Sheet1!A:E',  // Adjust based on your sheet structure
+                range: 'Sheet1!A:J', // Update this to match your column structure
             }).then(function(response) {
                 const values = response.result.values;
                 const filteredRecipes = values.filter(row => 
-                    row[0].toLowerCase().includes(searchTerm) || // Recipe name
-                    row[1].toLowerCase().includes(searchTerm)    // Ingredients
+                    row[0].toLowerCase().includes(searchTerm) // Recipe Name
                 );
                 displayResults(filteredRecipes);
             });
@@ -42,10 +41,15 @@
                 const recipeDiv = document.createElement('div');
                 recipeDiv.innerHTML = `
                     <h3>${recipe[0]}</h3>
-                    <p>Ingredients: ${recipe[1]}</p>
-                    <p>Cooking Time: ${recipe[2]}</p>
-                    <p>Cuisine: ${recipe[3]}</p>
-                    <a href="${recipe[4]}" target="_blank">View on Patreon</a>
+                    <p>Meal: ${recipe[1]}</p>
+                    <p>Meat: ${recipe[2]}</p>
+                    <p>Calories: ${recipe[3]}</p>
+                    <p>Fat: ${recipe[4]}</p>
+                    <p>Carbs: ${recipe[5]}</p>
+                    <p>Protein: ${recipe[6]}</p>
+                    <p>Method: ${recipe[7]}</p>
+                    <p>Cooking Time: ${recipe[8]}</p>
+                    <a href="${recipe[9]}" target="_blank">View on Patreon</a>
                 `;
                 resultsDiv.appendChild(recipeDiv);
             });
