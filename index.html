@@ -11,7 +11,14 @@
     <div id="results"></div>
 
     <script>
-        const spreadsheetId = '1MVZFjrGrFPU1HJmg_Q5gVUVbFhTT-pZihRV39eYp40M'; // Replace with your Google Sheet's ID
+        let apiKey;
+        if (typeof process !== 'undefined' && process.env.GOOGLE_API_KEY) {
+            apiKey = process.env.GOOGLE_API_KEY;
+        } else {
+            apiKey = 'your_api_key_here'; // Fallback for local development
+        }
+
+        const spreadsheetId = '1MVZFjrGrFPU1HJmg_Q5gVUVbFhTT-pZihRV39eYp40M';
 
         function searchRecipes() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -46,7 +53,7 @@
 
         function initClient() {
             gapi.client.init({
-                apiKey: 'AIzaSyBLZuqP-SSlxmOyGnLV_RJdU8mSwDg2aUA',
+                apiKey: apiKey,
                 discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
             }).then(function () {
                 // API is initialized and ready to use
