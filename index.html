@@ -105,14 +105,13 @@ function filterRecipes() {
         // Check if recipe matches the search term
         const matchesSearch = recipeName.includes(searchValue);
 
-        // Check if recipe matches selected meal filters
-        const mealMatch = selectedMeals.length === 0 || selectedMeals.includes(row.cells[1].textContent);
+        // Check if recipe matches any of the selected meal filters
+        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
         // Show row if it matches both criteria
         row.style.display = (matchesSearch && mealMatch) ? '' : 'none';
     });
-}
-</script>
+}</script>
 
 </body>
 </html>
