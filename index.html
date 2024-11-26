@@ -43,18 +43,20 @@ fetch('recipes.json')
     .then(response => response.json())
     .then(data => {
         const tableBody = document.getElementById('tableBody');
+        
+        // Loop through each recipe in the data array
         data.forEach(recipe => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${recipe.RecipeName}</td>
-                <td>${recipe.meal}</td>
-                <td>${recipe.calories}</td>
-                <td>${recipe.fat}</td>
-                <td>${recipe.carbs}</td>
-                <td>${recipe.protein}</td>
-                <td>${recipe.method}</td>
+                <td>${recipe.Meal}</td>
+                <td>${recipe.Calories}</td>
+                <td>${recipe.Fat}</td>
+                <td>${recipe.Carbs}</td>
+                <td>${recipe.Protein}</td>
+                <td>${recipe.Method}</td>
                 <td>${recipe.CookingTime}</td>
-                <td><a href="${recipe.link}" target="_blank">View Recipe</a></td>
+                <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
             `;
             tableBody.appendChild(row);
         });
