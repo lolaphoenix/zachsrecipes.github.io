@@ -35,13 +35,16 @@
         <label><input type="checkbox" value="Bento Box" onchange="filterRecipes()"> Bento Box</label>
     </div>
 
-    <!-- Calories Filter -->
+    <!-- Calories Filter as Dropdown -->
     <div class="checkbox-group">
         <h4>Calories:</h4>
-        <label><input type="checkbox" value="200cal or less" onchange="filterRecipes()"> 200cal or less</label>
-        <label><input type="checkbox" value="201-400" onchange="filterRecipes()"> 201-400</label>
-        <label><input type="checkbox" value="401-600" onchange="filterRecipes()"> 401-600</label>
-        <label><input type="checkbox" value="600+" onchange="filterRecipes()"> 600+</label>
+        <select id="calorieFilter" onchange="filterRecipes()">
+            <option value="">Select Calorie Range</option>
+            <option value="200cal or less">200cal or less</option>
+            <option value="201-400">201-400</option>
+            <option value="401-600">401-600</option>
+            <option value="600+">600+</option>
+        </select>
     </div>
 
     <!-- Additional filters can be added here -->
@@ -126,11 +129,8 @@ function filterRecipes() {
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
                                .map(checkbox => checkbox.value);
 
-    // Get selected calorie filters
-    const selectedCalories = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                                  .map(checkbox => checkbox.value)
-                                  .filter(value => 
-                                      ["200cal or less", "201-400", "401-600", "600+"].includes(value));
+    // Get selected calorie filter from dropdown
+    const selectedCalorie = document.getElementById('calorieFilter').value;
 
     rows.forEach(row => {
         const recipeName = row.cells[0].textContent.toLowerCase();
@@ -144,8 +144,8 @@ function filterRecipes() {
         // Get the calorie value from the table cell
         const calorieCellValue = row.cells[2].textContent;
 
-        // Check if recipe matches any of the selected calorie filters
-        const calorieMatch = selectedCalories.length === 0 || selectedCalories.some(calorie => matchesCalorieRange(calorieCellValue, calorie));
+        // Check if recipe matches the selected calorie filter
+        const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
 
         // Show row if it matches both criteria
         row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
