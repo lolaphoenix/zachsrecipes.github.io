@@ -89,17 +89,20 @@
         </select>
     </div>
 
-    <!-- Method Filter as Checkboxes -->
+    <!-- Cooking Time Filter as Dropdown -->
     <div class='checkbox-group'>
-      <h4>Method:</h4>
+      <h4>Cooking Time:</h4>
 
-      <!-- Added Method Checkboxes -->
-      <label><input type='checkbox' value='Slow Cooker' onchange='filterRecipes()'> Slow Cooker</label> 
-      <label><input type='checkbox' value='Stovetop' onchange='filterRecipes()'> Stovetop</label> 
-      <label><input type='checkbox' value='Baking' onchange='filterRecipes()'> Baking</label> 
-      <label><input type='checkbox' value='Microwave' onchange='filterRecipes()'> Microwave</label> 
-      <label><input type='checkbox' value='Grilling' onchange='filterRecipes()'> Grilling</label> 
-      <!-- Add more methods as needed -->
+      <!-- Cooking Time Dropdown -->
+      <select id='cookingTimeFilter' onchange='filterRecipes()'>
+          <option value=''>Select Cooking Time Range...</options> 
+          <!-- Cooking time options -->
+          <option value='Up to 20 minutes'>Up to 20 minutes</options> 
+          <option value='21-30 minutes'>21-30 minutes</options> 
+          <option value='31-40 minutes'>31-40 minutes</options> 
+          <option value='41-50 minutes'>41-50 minutes</options> 
+          <option value='50+ minutes'>50+ minutes</options> 
+      </select>  
    </div>
 
    <!-- Additional filters can be added here -->
@@ -115,12 +118,12 @@
             <th>Fat</th>
             <th>Carbs</th>
             <th>Protein</th>
-            <th>Method</th>
-            <!-- Removed Cooking Time from here -->
-            <!-- Add Cooking Time back if needed in future -->
-            <!-- Example:  -->
-            <!--  th><Cooking Time></th>-->
-            <!-- Add Link column -->
+            <!-- Include Method column here -->
+            <!-- Example:  --> 
+            <!--  th>${recipe.Method}</td>-->
+            <!-- Include Link column here --> 
+            <!-- Example:  --> 
+            <!-- td><a href="${recipe.Link}" target="_blank">View Recipe<a/></td>-->
           </tr> 
           </thead> 
           <!-- Add tbody for data rows --> 
@@ -153,7 +156,7 @@ fetch('recipes.json')
                 <td>${recipe.Calories}</td>
                 <td>${recipe.Fat}</td>
                 <td>${recipe.Carbs}</td>
-                <td>${recipe.Protein}</td>
+                <td>${recipe.Protein}</td>  
                 <!-- Include Method column here -->
                 <!-- Example:  --> 
                 <!--  td>${recipe.Method}</td>-->
