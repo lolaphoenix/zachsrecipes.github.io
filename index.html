@@ -101,8 +101,8 @@ fetch('recipes.json')
 
 // Helper function to check if a calorie value matches a selected range
 function matchesCalorieRange(calorieValue, selectedCalorie) {
-    // Remove any non-numeric characters from calorieValue for comparison
     const numericCalories = parseInt(calorieValue.split(" ")[0]); // Get numeric part of the string
+
     switch (selectedCalorie) {
         case "200cal or less":
             return numericCalories <= 200;
@@ -151,7 +151,6 @@ function filterRecipes() {
         row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
     });
 }
-
 </script>
 
 </body>
