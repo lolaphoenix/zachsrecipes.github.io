@@ -1,7 +1,6 @@
-// api/sheets.js
 export default async function handler(req, res) {
     const sheetID = '1MVZFjrGrFPU1HJmg_Q5gVUVbFhTT-pZihRV39eYp40M'; // Your actual sheet ID
-    const apiKey = process.env.GOOGLE_SHEETS_API_KEY; // Accessing the API key from environment variables
+    const apiKey = process.env.GOOGLE_API_KEY; // Accessing the API key from environment variables
 
     try {
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/Sheet1!A:I?key=${apiKey}`);
