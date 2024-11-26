@@ -35,7 +35,16 @@
         <label><input type="checkbox" value="Bento Box" onchange="filterRecipes()"> Bento Box</label>
     </div>
 
-    <!-- Add similar checkbox groups for Meat, Calories, etc. -->
+    <!-- Calories Filter -->
+    <div class="checkbox-group">
+        <h4>Calories:</h4>
+        <label><input type="checkbox" value="200cal or less" onchange="filterRecipes()"> 200cal or less</label>
+        <label><input type="checkbox" value="201-400" onchange="filterRecipes()"> 201-400</label>
+        <label><input type="checkbox" value="401-600" onchange="filterRecipes()"> 401-600</label>
+        <label><input type="checkbox" value="600+" onchange="filterRecipes()"> 600+</label>
+    </div>
+
+    <!-- Add similar checkbox groups for Meat, Fat, Carbs, Protein, Method, and Cooking Time -->
     
 </div>
 
@@ -95,9 +104,14 @@ function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
     const rows = document.querySelectorAll('#recipeTable tbody tr');
 
-    // Get selected filters
+    // Get selected meal filters
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
                                .map(checkbox => checkbox.value);
+
+    // Get selected calorie filters
+    const selectedCalories = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                                  .filter(checkbox => checkbox.parentElement.textContent.includes("Calories"))
+                                  .map(checkbox => checkbox.value);
 
     rows.forEach(row => {
         const recipeName = row.cells[0].textContent.toLowerCase();
@@ -108,10 +122,14 @@ function filterRecipes() {
         // Check if recipe matches any of the selected meal filters
         const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
-        // Show row if it matches both criteria
-        row.style.display = (matchesSearch && mealMatch) ? '' : 'none';
-    });
-}</script>
+        // Check if recipe matches any of the selected calorie filters
+        const calorieMatch = selectedCalories.length === 0 || selectedCalories.some(calorie => row.cells[2].textContent.includes(calorie));
 
+        // Show row if it matches both criteria
+        row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
+    });
+}
+
+</script>
 </body>
 </html>
