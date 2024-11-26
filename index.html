@@ -106,12 +106,12 @@ function filterRecipes() {
 
     // Get selected meal filters
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                               .filter(checkbox => checkbox.parentElement.textContent.includes("Meal"))
+                               .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === "Meal")
                                .map(checkbox => checkbox.value);
 
     // Get selected calorie filters
     const selectedCalories = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                                  .filter(checkbox => checkbox.parentElement.textContent.includes("Calories"))
+                                  .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === "Calories")
                                   .map(checkbox => checkbox.value);
 
     rows.forEach(row => {
@@ -130,6 +130,7 @@ function filterRecipes() {
         row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
     });
 }
+
 </script>
 </body>
 </html>
