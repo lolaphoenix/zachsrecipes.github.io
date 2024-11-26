@@ -106,6 +106,7 @@ function filterRecipes() {
 
     // Get selected meal filters
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                               .filter(checkbox => checkbox.parentElement.textContent.includes("Meal"))
                                .map(checkbox => checkbox.value);
 
     // Get selected calorie filters
@@ -129,7 +130,6 @@ function filterRecipes() {
         row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
     });
 }
-
 </script>
 </body>
 </html>
