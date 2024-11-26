@@ -44,7 +44,7 @@
         <label><input type="checkbox" value="600+" onchange="filterRecipes()"> 600+</label>
     </div>
 
-    <!-- Add similar checkbox groups for Meat, Fat, Carbs, Protein, Method, and Cooking Time -->
+    <!-- Additional filters can be added here -->
     
 </div>
 
@@ -106,13 +106,13 @@ function filterRecipes() {
 
     // Get selected meal filters
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                               .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === "Meal")
                                .map(checkbox => checkbox.value);
 
     // Get selected calorie filters
     const selectedCalories = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                                  .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === "Calories")
-                                  .map(checkbox => checkbox.value);
+                                  .map(checkbox => checkbox.value)
+                                  .filter(value => 
+                                      ["200cal or less", "201-400", "401-600", "600+"].includes(value));
 
     rows.forEach(row => {
         const recipeName = row.cells[0].textContent.toLowerCase();
@@ -130,7 +130,7 @@ function filterRecipes() {
         row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
     });
 }
-
 </script>
+
 </body>
 </html>
