@@ -35,35 +35,7 @@
         <label><input type="checkbox" value="Bento Box" onchange="filterRecipes()"> Bento Box</label>
     </div>
 
-    <div class="checkbox-group">
-        <h4>Meat:</h4>
-        <label><input type="checkbox" value="Beef" onchange="filterRecipes()"> Beef</label>
-        <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
-        <label><input type="checkbox" value="Pork" onchange="filterRecipes()"> Pork</label>
-        <label><input type="checkbox" value="Turkey" onchange="filterRecipes()"> Turkey</label>
-        <label><input type="checkbox" value="Sausage" onchange="filterRecipes()"> Sausage</label>
-        <label><input type="checkbox" value="Bacon" onchange="filterRecipes()"> Bacon</label>
-        <label><input type="checkbox" value="Spam" onchange="filterRecipes()"> Spam</label>
-        <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
-        <label><input type="checkbox" value="Tuna" onchange="filterRecipes()"> Tuna</label>
-        <label><input type="checkbox" value="Salami" onchange="filterRecipes()"> Salami</label>
-        <label><input type="checkbox" value="Fish" onchange="filterRecipes()"> Fish</label>
-        <label><input type="checkbox" value="Salmon" onchange="filterRecipes()"> Salmon</label>
-        <label><input type="checkbox" value="None" onchange="filterRecipes()"> None</label>
-    </div>
-
-    <!-- Add similar checkbox groups for Calories, Fat, Carbs, Protein, Method, and Cooking Time -->
-    
-    <!-- Example for Calories -->
-    <div class='checkbox-group'>
-      <h4>Calories:</h4>
-      <label><input type='checkbox' value='200cal or less' onchange='filterRecipes()'> 200cal or less</label>
-      <label><input type='checkbox' value='201-400' onchange='filterRecipes()'> 201-400</label>
-      <label><input type='checkbox' value='401-600' onchange='filterRecipes()'> 401-600</label>
-      <label><input type='checkbox' value='600+' onchange='filterRecipes()'> 600+</label>
-    </div>
-
-    <!-- Repeat for Fat, Carbs, Protein, Method, and Cooking Time -->
+    <!-- Add similar checkbox groups for Meat, Calories, etc. -->
     
 </div>
 
@@ -87,7 +59,12 @@
 <script>
 // Load recipes from the JSON file
 fetch('recipes.json')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         const tableBody = document.getElementById('tableBody');
         
@@ -128,4 +105,14 @@ function filterRecipes() {
         // Check if recipe matches the search term
         const matchesSearch = recipeName.includes(searchValue);
 
-        // Check if recipe matches sele
+        // Check if recipe matches selected meal filters
+        const mealMatch = selectedMeals.length === 0 || selectedMeals.includes(row.cells[1].textContent);
+
+        // Show row if it matches both criteria
+        row.style.display = (matchesSearch && mealMatch) ? '' : 'none';
+    });
+}
+</script>
+
+</body>
+</html>
