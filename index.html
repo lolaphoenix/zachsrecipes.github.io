@@ -89,16 +89,20 @@
         </select>
     </div>
 
-    <!-- Method Filter as Checkboxes -->
+    <!-- Cooking Time Filter as Dropdown -->
     <div class='checkbox-group'>
-      <h4>Method:</h4>
+      <h4>Cooking Time:</h4>
 
-      <!-- Added Method Checkboxes -->
-      <label><input type='checkbox' value='Slow Cooker' onchange='filterRecipes()'> Slow Cooker</label> 
-      <label><input type='checkbox' value='Stovetop' onchange='filterRecipes()'> Stovetop</label> 
-      <label><input type='checkbox' value='Baking' onchange='filterRecipes()'> Baking</label> 
-      <label><input type='checkbox' value='Microwave' onchange='filterRecipes()'> Microwave</label> 
-      <label><input type='checkbox' value='Grilling' onchange='filterRecipes()'> Grilling</label> 
+      <!-- Cooking Time Dropdown -->
+      <select id='cookingTimeFilter' onchange='filterRecipes()'>
+          <option value=''>Select Cooking Time Range...</options> 
+          <!-- Cooking time options -->
+          <option value='Up to 20 minutes'>Up to 20 minutes</options> 
+          <option value='21-30 minutes'>21-30 minutes</options> 
+          <option value='31-40 minutes'>31-40 minutes</options> 
+          <option value='41-50 minutes'>41-50 minutes</options> 
+          <option value='50+ minutes'>50+ minutes</options> 
+      </select>  
    </div>
 
    <!-- Additional filters can be added here -->
