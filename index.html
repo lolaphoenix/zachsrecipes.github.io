@@ -40,8 +40,12 @@
 <script>
 // Load recipes from the JSON file
 fetch('recipes.json')
-    .then(response => response.json())
+    .then(response => {
+        console.log("Response status:", response.status); // Log response status
+        return response.json();
+    })
     .then(data => {
+        console.log("Data loaded:", data); // Log loaded data
         const tableBody = document.getElementById('tableBody');
         
         // Loop through each recipe in the data array
