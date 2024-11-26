@@ -99,6 +99,33 @@ fetch('recipes.json')
     })
     .catch(error => console.error('Error loading recipes:', error));
 
+// Helper function to check if a calorie value matches a selected range
+function matchesCalorieRange(calorieValue, selectedCalorie) {
+    switch (selectedCalorie) {
+        case "200cal or less":
+            return parseInt(calorieValue) <= 200;
+        case "201-400":
+            return parseInt(calorieValue) > 200 && parseInt(calorieValue) <= 400;
+        case "401-600":
+            return parseInt(calorieValue) > 400 && parseInt(calorieValue) <= 600;
+        case "600+":
+            return parseInt(calorieValue) > 600;
+        default:
+            return false;
+    }
+}
+
+// Filter function
+function filterRecipes() {
+    const searchValue = document.getElementById('search').value.toLowerCase();
+    const rows = document.querySelectorAll('#recipeTable tbody tr');
+
+    // Get selected meal filters
+    const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                               .map(checkbox => checkbox.value);
+
+    // Get selected calorie filters
+    const selectedCalories = Array.from(document.querySelectorAll('.filter-settings
 // Filter function
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
