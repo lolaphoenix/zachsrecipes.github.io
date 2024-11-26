@@ -89,20 +89,17 @@
         </select>
     </div>
 
-    <!-- Cooking Time Filter as Dropdown -->
+    <!-- Method Filter as Checkboxes -->
     <div class='checkbox-group'>
-      <h4>Cooking Time:</h4>
+      <h4>Method:</h4>
 
-      <!-- Cooking Time Dropdown -->
-      <select id='cookingTimeFilter' onchange='filterRecipes()'>
-          <option value=''>Select Cooking Time Range...</options> 
-          <!-- Cooking time options -->
-          <option value='Up to 20 minutes'>Up to 20 minutes</options> 
-          <option value='21-30 minutes'>21-30 minutes</options> 
-          <option value='31-40 minutes'>31-40 minutes</options> 
-          <option value='41-50 minutes'>41-50 minutes</options> 
-          <option value='50+ minutes'>50+ minutes</options> 
-      </select>  
+      <!-- Added Method Checkboxes -->
+      <label><input type='checkbox' value='Slow Cooker' onchange='filterRecipes()'> Slow Cooker</label> 
+      <label><input type='checkbox' value='Stovetop' onchange='filterRecipes()'> Stovetop</label> 
+      <label><input type='checkbox' value='Baking' onchange='filterRecipes()'> Baking</label> 
+      <label><input type='checkbox' value='Microwave' onchange='filterRecipes()'> Microwave</label> 
+      <label><input type='checkbox' value='Grilling' onchange='filterRecipes()'> Grilling</label> 
+      <!-- Add more methods as needed -->
    </div>
 
    <!-- Additional filters can be added here -->
@@ -119,12 +116,18 @@
             <th>Carbs</th>
             <th>Protein</th>
             <th>Method</th>
-            <th>Cooking Time</th>
-            <th>Link</th>
-        </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-</table>
+            <!-- Removed Cooking Time from here -->
+            <!-- Add Cooking Time back if needed in future -->
+            <!-- Example:  -->
+            <!--  th><Cooking Time></th>-->
+            <!-- Add Link column -->
+          </tr> 
+          </thead> 
+          <!-- Add tbody for data rows --> 
+          <!-- Add data rows here based on the JSON data --> 
+          <!-- Example:  --> 
+          <!--  tbody id=tableBody></tbody--> 
+          </table>
 
 <script>
 // Load recipes from the JSON file
@@ -151,14 +154,17 @@ fetch('recipes.json')
                 <td>${recipe.Fat}</td>
                 <td>${recipe.Carbs}</td>
                 <td>${recipe.Protein}</td>
-                <td>${recipe.Method}</td>
-                <td>${recipe.CookingTime}</td> <!-- Ensure this matches your JSON structure -->
-                <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
-            `;
-            tableBody.appendChild(row);
-        });
-    })
-    .catch(error => console.error('Error loading recipes:', error));
+                <!-- Include Method column here -->
+                <!-- Example:  --> 
+                <!--  td>${recipe.Method}</td>-->
+                <!-- Include Link column here --> 
+                <!-- Example:  --> 
+                <!-- td><a href="${recipe.Link}" target="_blank">View Recipe<a/></td>-->
+             `;
+             tableBody.appendChild(row);
+         });
+     })
+     .catch(error => console.error('Error loading recipes:', error));
 
 // Helper function to check if a calorie value matches a selected range
 function matchesCalorieRange(calorieValue, selectedCalorie) {
@@ -244,22 +250,13 @@ function matchesProteinRange(proteinValue, selectedProtein) {
    }
 }
 
-// Helper function to check if cooking time matches the selected range
-function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
-   switch (selectedCookingTime) {
-       case 'Up to 20 minutes':
-           return cookingTimeValue.includes('Up to') || cookingTimeValue.includes('minutes');
-       case '21-30 minutes':
-           return cookingTimeValue.includes('21') || cookingTimeValue.includes('30');
-       case '31-40 minutes':
-           return cookingTimeValue.includes('31') || cookingTimeValue.includes('40');
-       case '41-50 minutes':
-           return cookingTimeValue.includes('41') || cookingTimeValue.includes('50');
-       case '50+ minutes':
-           return cookingTimeValue.includes('50+') || cookingTimeValue.includes('+');
-       default:
-           return false;
-   }
+// Helper function to check if method matches any selected methods
+function matchesMethod(methodValue, selectedMethods) {
+   // Split methodValue into an array of methods
+   const methodsArray = methodValue.split(', ').map(method => method.trim());
+   
+   // Check if any of the selected methods match
+   return selectedMethods.length === 0 || selectedMethods.some(selectedMethod => methodsArray.includes(selectedMethod));
 }
 
 // Filter function
@@ -283,8 +280,9 @@ function filterRecipes() {
    // Get selected protein filter from dropdown
    const selectedProtein = document.getElementById('proteinFilter').value;
 
-   // Get selected cooking time filter from dropdown
-   const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
+   // Get selected method filters from checkboxes
+   const selectedMethods = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                                .map(checkbox => checkbox.value);
 
    rows.forEach(row => {
        const recipeName = row.cells[0].textContent.toLowerCase();
@@ -295,12 +293,12 @@ function filterRecipes() {
        // Check if recipe matches any of the selected meal filters
        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
-       // Get the calorie, fat, carbs, protein and cooking time values from the table cells
+       // Get values from table cells
        const calorieCellValue = row.cells[2].textContent;
        const fatCellValue = row.cells[3].textContent;
        const carbCellValue = row.cells[4].textContent;
        const proteinCellValue = row.cells[5].textContent;
-       const cookingTimeCellValue = row.cells[6].textContent;
+       const methodCellValue = row.cells[6].textContent; // Ensure this is correct
 
        // Check if recipe matches the selected filters
        const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
@@ -308,11 +306,11 @@ function filterRecipes() {
        const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
        const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
        
-       // Check if recipe matches the selected cooking time filter
-       const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
+       // Check if recipe matches any of the selected method filters
+       const methodMatch = matchesMethod(methodCellValue, selectedMethods);
 
        // Show row if it matches all criteria
-       row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
+       row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && methodMatch) ? '' : 'none';
    });
 }
 </script>
