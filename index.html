@@ -64,8 +64,9 @@ $(document).ready(function() {
 // Filter function
 function filterRecipes() {
     const searchValue = $('#search').val().toLowerCase();
+    console.log("Filtering for:", searchValue); // Log the search value
     $('#recipeTable tbody tr').filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(searchValue) > -1)
+        $(this).toggle($(this).text().toLowerCase().indexOf(searchValue) > -1);
     });
 }
 </script>
