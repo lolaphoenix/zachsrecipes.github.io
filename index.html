@@ -47,6 +47,20 @@
         </select>
     </div>
 
+    <!-- Fat Filter as Dropdown -->
+    <div class="checkbox-group">
+        <h4>Fat:</h4>
+        <select id="fatFilter" onchange="filterRecipes()">
+            <option value="">Select Fat Range</option>
+            <option value="10g or less">10g or less</option>
+            <option value="11-20">11-20</option>
+            <option value="21-30">21-30</option>
+            <option value="31-40">31-40</option>
+            <option value="41-50">41-50</option>
+            <option value="50+">50+</option>
+        </select>
+    </div>
+
     <!-- Additional filters can be added here -->
     
 </div>
@@ -120,6 +134,28 @@ function matchesCalorieRange(calorieValue, selectedCalorie) {
     }
 }
 
+// Helper function to check if a fat value matches a selected range
+function matchesFatRange(fatValue, selectedFat) {
+    const numericFat = parseInt(fatValue.split(" ")[0]); // Get numeric part of the string
+
+    switch (selectedFat) {
+        case "10g or less":
+            return numericFat <= 10;
+        case "11-20":
+            return numericFat > 10 && numericFat <= 20;
+        case "21-30":
+            return numericFat > 20 && numericFat <= 30;
+        case "31-40":
+            return numericFat > 30 && numericFat <= 40;
+        case "41-50":
+            return numericFat > 40 && numericFat <= 50;
+        case "50+":
+            return numericFat > 50;
+        default:
+            return false;
+    }
+}
+
 // Filter function
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
@@ -132,6 +168,9 @@ function filterRecipes() {
     // Get selected calorie filter from dropdown
     const selectedCalorie = document.getElementById('calorieFilter').value;
 
+    // Get selected fat filter from dropdown
+    const selectedFat = document.getElementById('fatFilter').value;
+
     rows.forEach(row => {
         const recipeName = row.cells[0].textContent.toLowerCase();
         
@@ -141,14 +180,18 @@ function filterRecipes() {
         // Check if recipe matches any of the selected meal filters
         const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
-        // Get the calorie value from the table cell
+        // Get the calorie and fat values from the table cells
         const calorieCellValue = row.cells[2].textContent;
+        const fatCellValue = row.cells[3].textContent;
 
         // Check if recipe matches the selected calorie filter
         const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
 
-        // Show row if it matches both criteria
-        row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
+        // Check if recipe matches the selected fat filter
+        const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
+
+        // Show row if it matches all criteria
+        row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch) ? '' : 'none';
     });
 }
 </script>
