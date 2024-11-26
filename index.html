@@ -89,20 +89,16 @@
         </select>
     </div>
 
-    <!-- Cooking Time Filter as Dropdown -->
+    <!-- Cooking Time Filter as Checkboxes -->
     <div class='checkbox-group'>
       <h4>Cooking Time:</h4>
 
-      <!-- Added Cooking Time Filter -->
-      <select id='cookingTimeFilter' onchange='filterRecipes()'>
-          <option value=''>Select Cooking Time Range...</options> 
-          <!-- Cooking time options -->
-          <option value='Up to 20 minutes'>Up to 20 minutes</options> 
-          <option value='21-30'>21-30 minutes</options> 
-          <option value='31-40'>31-40 minutes</options> 
-          <option value='41-50'>41-50 minutes</options> 
-          <option value='50+'>50+ minutes</options> 
-      </select>  
+      <!-- Added Cooking Time Checkboxes -->
+      <label><input type='checkbox' value='Up to 20 minutes' onchange='filterRecipes()'> Up to 20 minutes</label> 
+      <label><input type='checkbox' value='21-30' onchange='filterRecipes()'> 21-30 minutes</label> 
+      <label><input type='checkbox' value='31-40' onchange='filterRecipes()'> 31-40 minutes</label> 
+      <label><input type='checkbox' value='41-50' onchange='filterRecipes()'> 41-50 minutes</label> 
+      <label><input type='checkbox' value='50+' onchange='filterRecipes()'> 50+ minutes</label> 
    </div>
 
    <!-- Additional filters can be added here -->
@@ -283,8 +279,9 @@ function filterRecipes() {
    // Get selected protein filter from dropdown
    const selectedProtein = document.getElementById('proteinFilter').value;
 
-   // Get selected cooking time filter from dropdown
-   const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
+   // Get selected cooking time filters from checkboxes
+   const selectedCookingTimes = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                                     .map(checkbox => checkbox.value);
 
    rows.forEach(row => {
        const recipeName = row.cells[0].textContent.toLowerCase();
@@ -307,7 +304,10 @@ function filterRecipes() {
        const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
        const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
        const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
-       const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
+       
+       // Check if recipe matches any of the selected cooking time filters
+       const cookingTimeMatch = !selectedCookingTimes.length || 
+                                selectedCookingTimes.some(time => matchesCookingTime(cookingTimeCellValue, time));
 
        // Show row if it matches all criteria
        row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
