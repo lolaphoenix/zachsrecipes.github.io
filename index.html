@@ -93,7 +93,7 @@
     <div class='checkbox-group'>
       <h4>Cooking Time:</h4>
 
-      <!-- Added Cooking Time Dropdown -->
+      <!-- Cooking Time Dropdown -->
       <select id='cookingTimeFilter' onchange='filterRecipes()'>
           <option value=''>Select Cooking Time Range...</options> 
           <!-- Cooking time options -->
@@ -104,7 +104,7 @@
           <option value='50+ minutes'>50+ minutes</options> 
       </select>  
    </div>
-<br>
+
    <!-- Additional filters can be added here -->
     
 </div>
@@ -152,7 +152,7 @@ fetch('recipes.json')
                 <td>${recipe.Carbs}</td>
                 <td>${recipe.Protein}</td>
                 <td>${recipe.Method}</td>
-                <td>${recipe.CookingTime}</td>
+                <td>${recipe.CookingTime}</td> <!-- Ensure this matches your JSON structure -->
                 <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
             `;
             tableBody.appendChild(row);
@@ -249,13 +249,13 @@ function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
    switch (selectedCookingTime) {
        case 'Up to 20 minutes':
            return cookingTimeValue.includes('Up to') || cookingTimeValue.includes('minutes');
-       case '21-30':
+       case '21-30 minutes':
            return cookingTimeValue.includes('21') || cookingTimeValue.includes('30');
-       case '31-40':
+       case '31-40 minutes':
            return cookingTimeValue.includes('31') || cookingTimeValue.includes('40');
-       case '41-50':
+       case '41-50 minutes':
            return cookingTimeValue.includes('41') || cookingTimeValue.includes('50');
-       case '50+':
+       case '50+ minutes':
            return cookingTimeValue.includes('50+') || cookingTimeValue.includes('+');
        default:
            return false;
@@ -317,4 +317,5 @@ function filterRecipes() {
 }
 </script>
 
+<!-- Closing tags for body and html -->
 </body></html>
