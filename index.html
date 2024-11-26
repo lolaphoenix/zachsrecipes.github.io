@@ -19,7 +19,6 @@
 
 <div class="filter">
     <input type="text" id="search" placeholder="Search by Recipe Name" onkeyup="filterRecipes()">
-    <!-- Add dropdowns for Meal, Method, etc. -->
 </div>
 
 <table id="recipeTable">
@@ -42,22 +41,25 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 // Fetch data from Google Sheets
-const sheetID = '1MVZFjrGrFPU1HJmg_Q5gVUVbFhTT-pZihRV39eYp40M'; // Replace with your actual sheet ID
-const apiKey = process.env.GOOGLE_SHEETS_API_KEY; // Accessing the API key from environment variables
-const range = 'Sheet1!A:I'; // Adjust based on your sheet name
-
 $(document).ready(function() {
-    $.get(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${range}?key=${apiKey}`, function(data) {
-        const rows = data.values;
-        let html = '';
-        for (let i = 1; i < rows.length; i++) {
-            html += '<tr>';
-            for (let j = 0; j < rows[i].length; j++) {
-                html += `<td>${rows[i][j]}</td>`;
+    $.get('/api/sheets', function(data) { // Call the serverless function
+        if (data && data.values) {
+            const rows = data.values;
+            let html = '';
+            for (let i = 1; i < rows.length; i++) {
+                html += '<tr>';
+                for (let j = 0; j < rows[i].length; j++) {
+                    html += `<td>${rows[i][j]}</td>`;
+                }
+                html += '</tr>';
             }
-            html += '</tr>';
+            $('#tableBody').html(html);
+        } else {
+            $('#tableBody').html('<tr><td colspan="9">No data available.</td></tr>');
         }
-        $('#tableBody').html(html);
+    }).fail(function() {
+        $('#tableBody').html('<tr><td colspan="9">Failed to load data.</td></tr>');
+        console.error("Failed to load data.");
     });
 });
 
