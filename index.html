@@ -61,7 +61,48 @@
         </select>
     </div>
 
-    <!-- Additional filters can be added here -->
+    <!-- Carbs Filter as Dropdown -->
+    <div class="checkbox-group">
+        <h4>Carbs:</h4>
+        <select id="carbFilter" onchange="filterRecipes()">
+            <option value="">Select Carb Range</option>
+            <option value="10g or less">10g or less</option>
+            <option value="11-20">11-20</option>
+            <option value="21-30">21-30</option>
+            <option value="31-40">31-40</option>
+            <option value="41-50">41-50</option>
+            <option value="50+">50+</option>
+        </select>
+    </div>
+
+    <!-- Protein Filter as Dropdown -->
+    <div class="checkbox-group">
+        <h4>Protein:</h4>
+        <select id="proteinFilter" onchange="filterRecipes()">
+            <option value="">Select Protein Range</option>
+            <option value="10g or less">10g or less</option>
+            <option value="11-20">11-20</option>
+            <option value="21-30">21-30</option>
+            <option value="31-40">31-40</option>
+            <option value="41-50">41-50</option>
+            <option value="50+">50+</option>
+        </select>
+    </div>
+
+    <!-- Cooking Time Filter as Dropdown -->
+    <div class='checkbox-group'>
+      <h4>Cooking Time:</h4>
+      <select id='cookingTimeFilter' onchange='filterRecipes()'>
+          <option value=''>Select Cooking Time Range</option>
+          <option value='Up to 20 minutes'>Up to 20 minutes</option>
+          <option value='21-30'>21-30 minutes</option>
+          <option value='31-40'>31-40 minutes</option>
+          <option value='41-50'>41-50 minutes</option>
+          <option value='50+'>50+ minutes</option> 
+      </select>  
+   </div>
+
+   <!-- Additional filters can be added here -->
     
 </div>
 
@@ -156,45 +197,116 @@ function matchesFatRange(fatValue, selectedFat) {
     }
 }
 
+// Helper function to check if a carbs value matches a selected range
+function matchesCarbRange(carbValue, selectedCarb) {
+    const numericCarbs = parseInt(carbValue.split(" ")[0]); // Get numeric part of the string
+
+    switch (selectedCarb) {
+      case "10g or less":
+          return numericCarbs <= 10;
+      case "11-20":
+          return numericCarbs > 10 && numericCarbs <= 20;
+      case "21-30":
+          return numericCarbs > 20 && numericCarbs <= 30;
+      case "31-40":
+          return numericCarbs > 30 && numericCarbs <= 40;
+      case "41-50":
+          return numericCarbs > 40 && numericCarbs <= 50;
+      case "50+":
+          return numericCarbs > 50;
+      default:
+          return false;
+   }
+}
+
+// Helper function to check if a protein value matches a selected range
+function matchesProteinRange(proteinValue, selectedProtein) {
+   const numericProtein = parseInt(proteinValue.split(" ")[0]); // Get numeric part of the string
+
+   switch (selectedProtein) {
+       case "10g or less":
+           return numericProtein <= 10;
+       case "11-20":
+           return numericProtein > 10 && numericProtein <= 20;
+       case "21-30":
+           return numericProtein > 20 && numericProtein <= 30;
+       case "31-40":
+           return numericProtein > 30 && numericProtein <= 40;
+       case "41-50":
+           return numericProtein > 40 && numericProtein <= 50;
+       case "50+":
+           return numericProtein > 50;
+       default:
+           return false;
+   }
+}
+
+// Helper function to check if cooking time matches the selected range
+function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
+   switch (selectedCookingTime) {
+       case 'Up to 20 minutes':
+           return cookingTimeValue.includes('Up to') || cookingTimeValue.includes('minutes');
+       case '21-30':
+           return cookingTimeValue.includes('21') || cookingTimeValue.includes('30');
+       case '31-40':
+           return cookingTimeValue.includes('31') || cookingTimeValue.includes('40');
+       case '41-50':
+           return cookingTimeValue.includes('41') || cookingTimeValue.includes('50');
+       case '50+':
+           return cookingTimeValue.includes('50+') || cookingTimeValue.includes('+');
+       default:
+           return false;
+   }
+}
+
 // Filter function
 function filterRecipes() {
-    const searchValue = document.getElementById('search').value.toLowerCase();
-    const rows = document.querySelectorAll('#recipeTable tbody tr');
+   const searchValue = document.getElementById('search').value.toLowerCase();
+   const rows = document.querySelectorAll('#recipeTable tbody tr');
 
-    // Get selected meal filters
-    const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                               .map(checkbox => checkbox.value);
+   // Get selected meal filters
+   const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                              .map(checkbox => checkbox.value);
 
-    // Get selected calorie filter from dropdown
-    const selectedCalorie = document.getElementById('calorieFilter').value;
+   // Get selected calorie filter from dropdown
+   const selectedCalorie = document.getElementById('calorieFilter').value;
 
-    // Get selected fat filter from dropdown
-    const selectedFat = document.getElementById('fatFilter').value;
+   // Get selected fat filter from dropdown
+   const selectedFat = document.getElementById('fatFilter').value;
 
-    rows.forEach(row => {
-        const recipeName = row.cells[0].textContent.toLowerCase();
-        
-        // Check if recipe matches the search term
-        const matchesSearch = recipeName.includes(searchValue);
+   // Get selected carb filter from dropdown
+   const selectedCarb = document.getElementById('carbFilter').value;
 
-        // Check if recipe matches any of the selected meal filters
-        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
+   // Get selected protein filter from dropdown
+   const selectedProtein = document.getElementById('proteinFilter').value;
 
-        // Get the calorie and fat values from the table cells
-        const calorieCellValue = row.cells[2].textContent;
-        const fatCellValue = row.cells[3].textContent;
+   // Get selected cooking time filter from dropdown
+   const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
 
-        // Check if recipe matches the selected calorie filter
-        const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
+   rows.forEach(row => {
+       const recipeName = row.cells[0].textContent.toLowerCase();
+       
+       // Check if recipe matches the search term
+       const matchesSearch = recipeName.includes(searchValue);
 
-        // Check if recipe matches the selected fat filter
-        const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
+       // Check if recipe matches any of the selected meal filters
+       const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
-        // Show row if it matches all criteria
-        row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch) ? '' : 'none';
-    });
+       // Get the calorie, fat, carbs, protein and cooking time values from the table cells
+       const calorieCellValue = row.cells[2].textContent;
+       const fatCellValue = row.cells[3].textContent;
+       const carbCellValue = row.cells[4].textContent;
+       const proteinCellValue = row.cells[5].textContent;
+       const cookingTimeCellValue = row.cells[6].textContent;
+
+       // Check if recipe matches the selected filters
+       const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
+       const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
+       const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
+       const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
+       const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
+
+       // Show row if it matches all criteria
+       row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
+   });
 }
-</script>
-
-</body>
-</html>
