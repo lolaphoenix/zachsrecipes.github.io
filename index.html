@@ -101,31 +101,22 @@ fetch('recipes.json')
 
 // Helper function to check if a calorie value matches a selected range
 function matchesCalorieRange(calorieValue, selectedCalorie) {
+    // Remove any non-numeric characters from calorieValue for comparison
+    const numericCalories = parseInt(calorieValue.split(" ")[0]); // Get numeric part of the string
     switch (selectedCalorie) {
         case "200cal or less":
-            return parseInt(calorieValue) <= 200;
+            return numericCalories <= 200;
         case "201-400":
-            return parseInt(calorieValue) > 200 && parseInt(calorieValue) <= 400;
+            return numericCalories > 200 && numericCalories <= 400;
         case "401-600":
-            return parseInt(calorieValue) > 400 && parseInt(calorieValue) <= 600;
+            return numericCalories > 400 && numericCalories <= 600;
         case "600+":
-            return parseInt(calorieValue) > 600;
+            return numericCalories > 600;
         default:
             return false;
     }
 }
 
-// Filter function
-function filterRecipes() {
-    const searchValue = document.getElementById('search').value.toLowerCase();
-    const rows = document.querySelectorAll('#recipeTable tbody tr');
-
-    // Get selected meal filters
-    const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                               .map(checkbox => checkbox.value);
-
-    // Get selected calorie filters
-    const selectedCalories = Array.from(document.querySelectorAll('.filter-settings
 // Filter function
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
@@ -150,13 +141,17 @@ function filterRecipes() {
         // Check if recipe matches any of the selected meal filters
         const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
+        // Get the calorie value from the table cell
+        const calorieCellValue = row.cells[2].textContent;
+
         // Check if recipe matches any of the selected calorie filters
-        const calorieMatch = selectedCalories.length === 0 || selectedCalories.some(calorie => row.cells[2].textContent.includes(calorie));
+        const calorieMatch = selectedCalories.length === 0 || selectedCalories.some(calorie => matchesCalorieRange(calorieCellValue, calorie));
 
         // Show row if it matches both criteria
         row.style.display = (matchesSearch && mealMatch && calorieMatch) ? '' : 'none';
     });
 }
+
 </script>
 
 </body>
