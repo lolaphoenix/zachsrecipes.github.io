@@ -141,7 +141,7 @@ fetch('recipes.json')
         window.recipesData = data;
 
         // Loop through each recipe in the data array
-        function getCookingTimeText(cookingTime) {
+function getCookingTimeText(cookingTime) {
   if (cookingTime <= 20) return "Up to 20 minutes";
   if (cookingTime <= 30) return "21-30 minutes";
   if (cookingTime <= 40) return "31-40 minutes";
@@ -149,6 +149,7 @@ fetch('recipes.json')
   return "50+ minutes";
 }
 
+// Inside the fetch .then() block, update the row creation:
 data.forEach(recipe => {
   const row = document.createElement('tr');
   row.innerHTML = `
@@ -254,14 +255,12 @@ function matchesProteinRange(proteinValue, selectedProtein) {
 // Helper function to check if cooking time matches the selected range
 function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
   const cookingTime = parseInt(cookingTimeValue);
-  const selectedTime = parseInt(selectedCookingTime);
-  
-  switch (selectedTime) {
-    case 20: return cookingTime <= 20;
-    case 30: return cookingTime > 20 && cookingTime <= 30;
-    case 40: return cookingTime > 30 && cookingTime <= 40;
-    case 50: return cookingTime > 40 && cookingTime <= 50;
-    case 60: return cookingTime > 50;
+  switch (selectedCookingTime) {
+    case 'Up to 20 minutes': return cookingTime <= 20;
+    case '21-30 minutes': return cookingTime > 20 && cookingTime <= 30;
+    case '31-40 minutes': return cookingTime > 30 && cookingTime <= 40;
+    case '41-50 minutes': return cookingTime > 40 && cookingTime <= 50;
+    case '50+ minutes': return cookingTime > 50;
     default: return true;
   }
 }
