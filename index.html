@@ -106,18 +106,19 @@
     <!-- Recipe Table -->
     <table id="recipeTable">
         <thead>
+            <!-- Ensure each column header is correctly defined -->
             <tr>
-                <!-- Ensure each column header is correctly defined -->
                 <th>Recipe Name</th>
                 <th>Meal</th>
                 <th>Calories</th>
                 <th>Fat</th>
                 <th>Carbs</th>
                 <th>Protein</th>
-                <th>Method</th>
-                <!-- Ensure correct order of columns -->
+                <!-- Include Method Column -->
+                <th>Method</th> 
+                <!-- Include Cooking Time Column -->
                 <th>Cooking Time</th> 
-                <!-- Separate Link column -->
+                <!-- Include Link Column -->
                 <th>Link</th> 
             </tr> 
         </thead> 
@@ -150,6 +151,8 @@
                       <td>${recipe.Fat}</td> 
                       <td>${recipe.Carbs}</td> 
                       <td>${recipe.Protein}</td> 
+                      <!-- Display method in its own column -->
+                      <td>${recipe.Method}</td>  
                       <!-- Display cooking time in user-friendly format using function -->
                       ${getCookingTimeText(recipe.CookingTime)} 
                       <!-- Separate Link column with anchor tag -->
@@ -273,7 +276,7 @@
                const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
 
                // Check if recipe matches the selected cooking time filter
-               const cookingTimeCellValue = getCookingTimeText(row.cells[6].textContent); // Use function to get text display
+               const cookingTimeCellValue = getCookingTimeText(row.cells[7].textContent); // Use function to get text display
                const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
 
                // Show row if it matches all criteria
