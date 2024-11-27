@@ -91,17 +91,16 @@
 
     <!-- Cooking Time Filter as Dropdown -->
     <div class='checkbox-group'>
-      <h4>Cooking Time:</h4>
-<select id="cookingTimeFilter" onchange="filterRecipes()">
-    <option value="">Select Cooking Time Range</option>
-    <option value="0-20">Up to 20 minutes</option>
-    <option value="21-30">21-30 minutes</option>
-    <option value="31-40">31-40 minutes</option>
-    <option value="41-50">41-50 minutes</option>
-    <option value="50+">50+ minutes</option>
-</select>
-
-   </div>
+    <h4>Minutes:</h4>
+    <select id="cookingTimeFilter" onchange="filterRecipes()">
+        <option value="">Select Cooking Time Range</option>
+        <option value="0-20">0-20 minutes</option>
+        <option value="21-30">21-30 minutes</option>
+        <option value="31-40">31-40 minutes</option>
+        <option value="41-50">41-50 minutes</option>
+        <option value="51-300">51+ minutes</option>
+    </select>
+</div>
 <br>
    <!-- Additional filters can be added here -->
     
@@ -109,18 +108,18 @@
 
 <table id="recipeTable">
     <thead>
-        <tr>
-            <th>Recipe Name</th>
-            <th>Meal</th>
-            <th>Calories</th>
-            <th>Fat</th>
-            <th>Carbs</th>
-            <th>Protein</th>
-            <th>Method</th>
-            <th>Cooking Time</th>
-            <th>Link</th>
-        </tr>
-    </thead>
+    <tr>
+        <th>Recipe Name</th>
+        <th>Meal</th>
+        <th>Calories</th>
+        <th>Fat</th>
+        <th>Carbs</th>
+        <th>Protein</th>
+        <th>Method</th>
+        <th>Minutes</th> 
+        <th>Link</th>
+    </tr>
+</thead>
     <tbody id="tableBody"></tbody>
 </table>
 
@@ -150,19 +149,19 @@ function getCookingTimeText(cookingTime) {
 
 // Inside the fetch .then() block, update the row creation:
 data.forEach(recipe => {
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>${recipe.RecipeName}</td>
-    <td>${recipe.Meal}</td>
-    <td>${recipe.Calories}</td>
-    <td>${recipe.Fat}</td>
-    <td>${recipe.Carbs}</td>
-    <td>${recipe.Protein}</td>
-    <td>${recipe.Method}</td>
-    <td>${getCookingTimeText(recipe.CookingTime)}</td>
-    <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
-  `;
-  tableBody.appendChild(row);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${recipe.RecipeName}</td>
+        <td>${recipe.Meal}</td>
+        <td>${recipe.Calories}</td>
+        <td>${recipe.Fat}</td>
+        <td>${recipe.Carbs}</td>
+        <td>${recipe.Protein}</td>
+        <td>${recipe.Method}</td>
+        <td>${recipe.CookingTime}</td> <!-- Directly use numeric range -->
+        <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
+    `;
+    tableBody.appendChild(row);
 });
     })
     .catch(error => console.error('Error loading recipes:', error));
@@ -252,16 +251,14 @@ function matchesProteinRange(proteinValue, selectedProtein) {
 }
 
 // Helper function to check if cooking time matches the selected range
-function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
+function matchesCookingTime(cookingTimeRange, selectedCookingTime) {
     if (!selectedCookingTime) return true; // No filter applied
 
-    const [min, max] = selectedCookingTime.split("-").map(Number); // Split range into numbers
+    const [min, max] = selectedCookingTime.split("-").map(Number); // Parse selected range
+    const [recipeMin, recipeMax] = cookingTimeRange.split("-").map(Number); // Parse recipe range
 
-    if (max) {
-        return cookingTimeValue >= min && cookingTimeValue <= max;
-    } else {
-        return cookingTimeValue > min; // For "50+" case
-    }
+    // Check if the ranges overlap
+    return recipeMin <= max && recipeMax >= min;
 }
 
 
