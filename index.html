@@ -297,7 +297,6 @@ function matchesCookingTime(cookingTimeRange, selectedCookingTime) {
 
 // Filter function
 function filterRecipes() {
-    function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
     const rows = document.querySelectorAll('#recipeTable tbody tr');
 
@@ -358,7 +357,6 @@ function filterRecipes() {
         row.style.display = (matchesSearch && mealMatch && meatMatch && methodMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
     });
 }
-
 </script>
 
 </body></html>
