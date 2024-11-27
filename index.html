@@ -37,14 +37,21 @@
 
 <div class="checkbox-group">
     <h4>Meat:</h4>
-    <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
     <label><input type="checkbox" value="Beef" onchange="filterRecipes()"> Beef</label>
+    <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
     <label><input type="checkbox" value="Pork" onchange="filterRecipes()"> Pork</label>
     <label><input type="checkbox" value="Turkey" onchange="filterRecipes()"> Turkey</label>
-    <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
+    <label><input type="checkbox" value="Sausage" onchange="filterRecipes()"> Sausage</label>
+    <label><input type="checkbox" value="Bacon" onchange="filterRecipes()"> Bacon</label>
     <label><input type="checkbox" value="Spam" onchange="filterRecipes()"> Spam</label>
+    <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
+    <label><input type="checkbox" value="Tuna" onchange="filterRecipes()"> Tuna</label>
+    <label><input type="checkbox" value="Salami" onchange="filterRecipes()"> Salami</label>
+    <label><input type="checkbox" value="Fish" onchange="filterRecipes()"> Fish</label>
+    <label><input type="checkbox" value="Salmon" onchange="filterRecipes()"> Salmon</label>
     <label><input type="checkbox" value="None" onchange="filterRecipes()"> None</label>
 </div>
+
 
     <!-- Calories Filter as Dropdown -->
     <div class="checkbox-group">
@@ -289,7 +296,7 @@ function filterRecipes() {
                                .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meat:')
                                .map(checkbox => checkbox.value);
 
-    // Get selected calorie, fat, carb, protein, and cooking time filters
+    // Get other filters
     const selectedCalorie = document.getElementById('calorieFilter').value;
     const selectedFat = document.getElementById('fatFilter').value;
     const selectedCarb = document.getElementById('carbFilter').value;
@@ -306,16 +313,17 @@ function filterRecipes() {
         const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
         // Check if recipe matches any of the selected meat filters
-        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(meat => row.cells[2].textContent.includes(meat));
+        const meatColumn = row.cells[2].textContent; // Adjust to the "Meat" column
+        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(meat => meatColumn.includes(meat));
 
-        // Get the calorie, fat, carbs, protein, and cooking time values from the table cells
+        // Get other column values
         const calorieCellValue = row.cells[3].textContent;
         const fatCellValue = row.cells[4].textContent;
         const carbCellValue = row.cells[5].textContent;
         const proteinCellValue = row.cells[6].textContent;
         const cookingTimeCellValue = row.cells[7].textContent;
 
-        // Check if recipe matches the selected filters
+        // Check if recipe matches other filters
         const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
         const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
         const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
