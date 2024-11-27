@@ -92,16 +92,15 @@
     <!-- Cooking Time Filter as Dropdown -->
     <div class='checkbox-group'>
       <h4>Cooking Time:</h4>
+<select id="cookingTimeFilter" onchange="filterRecipes()">
+    <option value="">Select Cooking Time Range</option>
+    <option value="0-20">Up to 20 minutes</option>
+    <option value="21-30">21-30 minutes</option>
+    <option value="31-40">31-40 minutes</option>
+    <option value="41-50">41-50 minutes</option>
+    <option value="50+">50+ minutes</option>
+</select>
 
-      <!-- Added Cooking Time Dropdown -->
-<select id='cookingTimeFilter' onchange='filterRecipes()'>
-  <option value=''>Select Cooking Time Range</option>
-  <option value='20'>Up to 20 minutes</option>
-  <option value='30'>21-30 minutes</option>
-  <option value='40'>31-40 minutes</option>
-  <option value='50'>41-50 minutes</option>
-  <option value='60'>50+ minutes</option>
-</select> 
    </div>
 <br>
    <!-- Additional filters can be added here -->
@@ -254,16 +253,17 @@ function matchesProteinRange(proteinValue, selectedProtein) {
 
 // Helper function to check if cooking time matches the selected range
 function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
-  const cookingTime = parseInt(cookingTimeValue);
-  switch (selectedCookingTime) {
-    case 'Up to 20 minutes': return cookingTime <= 20;
-    case '21-30 minutes': return cookingTime > 20 && cookingTime <= 30;
-    case '31-40 minutes': return cookingTime > 30 && cookingTime <= 40;
-    case '41-50 minutes': return cookingTime > 40 && cookingTime <= 50;
-    case '50+ minutes': return cookingTime > 50;
-    default: return true;
-  }
+    if (!selectedCookingTime) return true; // No filter applied
+
+    const [min, max] = selectedCookingTime.split("-").map(Number); // Split range into numbers
+
+    if (max) {
+        return cookingTimeValue >= min && cookingTimeValue <= max;
+    } else {
+        return cookingTimeValue > min; // For "50+" case
+    }
 }
+
 
 // Filter function
 function filterRecipes() {
@@ -312,7 +312,8 @@ function filterRecipes() {
        const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
        
        // Check if recipe matches the selected cooking time filter
-       const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
+	const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(Number(row.cells[7].textContent), selectedCookingTime);
+
 
        // Show row if it matches all criteria
        row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
