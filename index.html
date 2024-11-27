@@ -107,6 +107,7 @@
     <table id="recipeTable">
         <thead>
             <tr>
+                <!-- Ensure each column header is correctly defined -->
                 <th>Recipe Name</th>
                 <th>Meal</th>
                 <th>Calories</th>
@@ -114,8 +115,15 @@
                 <th>Carbs</th>
                 <th>Protein</th>
                 <th>Method</th>
-                <th>Cooking Time</th> <!-- Updated to reflect cooking time display -->
-                <th>Link</th></tr></thead><tbody id="tableBody"></tbody></table>
+                <!-- Ensure correct order of columns -->
+                <th>Cooking Time</th> 
+                <!-- Separate Link column -->
+                <th>Link</th> 
+            </tr> 
+        </thead> 
+        <!-- Table body to be filled with JavaScript -->
+        <tbody id="tableBody"></tbody> 
+    </table>
 
     <!-- JavaScript for functionality -->
     <script>
@@ -135,19 +143,17 @@
               data.forEach(recipe => {
                   const row = document.createElement('tr');
                   row.innerHTML = `
-                      <td>${recipe.RecipeName}</td>
-                      <td>${recipe.Meal}</td>
-                      <td>${recipe.Calories}</td>
-                      <td>${recipe.Fat}</td>
-                      <td>${recipe.Carbs}</td>
-                      <td>${recipe.Protein}</td>
-                      <td>${recipe.Method}</td>
-
-                      <!-- Display cooking time in user-friendly format -->
-                      ${getCookingTimeText(recipe.CookingTime)}
-                      
-                      <!-- Link to recipe -->
-                      ${recipe.Link}
+                      <!-- Ensure each cell is correctly defined -->
+                      <td>${recipe.RecipeName}</td> 
+                      <td>${recipe.Meal}</td> 
+                      <td>${recipe.Calories}</td> 
+                      <td>${recipe.Fat}</td> 
+                      <td>${recipe.Carbs}</td> 
+                      <td>${recipe.Protein}</td> 
+                      <!-- Display cooking time in user-friendly format using function -->
+                      ${getCookingTimeText(recipe.CookingTime)} 
+                      <!-- Separate Link column with anchor tag -->
+                      ${recipe.Link ? `<td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>` : '<td>No Link Available<td>'} 
                   `;
                   tableBody.appendChild(row);
               });
@@ -219,14 +225,13 @@
 
       // Helper function to check if cooking time matches the selected range
       function matchesCookingTime(cookingTimeValue, selectedCookingTime) {
-          const cookingTime = parseInt(cookingTimeValue);
-          switch (parseInt(selectedCookingTime)) {
-              case 20: return cookingTime <= 20; // Up to 20 minutes
-              case 30: return cookingTime > 20 && cookingTime <= 30; // Between 21 and 30 minutes
-              case 40: return cookingTime > 30 && cookingTime <= 40; // Between 31 and 40 minutes
-              case 50: return cookingTime > 40 && cookingTime <= 50; // Between 41 and 50 minutes
-              case 60: return cookingTime > 50; // More than 50 minutes
-              default: return true; // No filter applied
+          switch (selectedCookingTime) {
+              case 'Up to 20 minutes': return cookingTimeValue.includes('Up to') || cookingTimeValue.includes('minutes');
+              case '21-30': return cookingTimeValue.includes('21') || cookingTimeValue.includes('30');
+              case '31-40': return cookingTimeValue.includes('31') || cookingTimeValue.includes('40');
+              case '41-50': return cookingTimeValue.includes('41') || cookingTimeValue.includes('50');
+              case '50+': return cookingTimeValue.includes('50+') || cookingTimeValue.includes('+');
+              default: return false; // No match found
           }
       }
 
@@ -261,14 +266,14 @@
               const carbCellValue = row.cells[4].textContent;
               const proteinCellValue = row.cells[5].textContent;
 
-              // Check if recipe matches the selected filters
-              const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
-              const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
-              const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
-              const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
+               // Check if recipe matches the selected filters
+               const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
+               const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
+               const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
+               const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
 
                // Check if recipe matches the selected cooking time filter
-               const cookingTimeCellValue = row.cells[7].textContent; 
+               const cookingTimeCellValue = getCookingTimeText(row.cells[6].textContent); // Use function to get text display
                const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
 
                // Show row if it matches all criteria
