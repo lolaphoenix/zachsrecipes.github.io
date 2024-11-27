@@ -257,9 +257,10 @@ function matchesCookingTime(cookingTimeRange, selectedCookingTime) {
     const [min, max] = selectedCookingTime.split("-").map(Number); // Parse selected range
     const [recipeMin, recipeMax] = cookingTimeRange.split("-").map(Number); // Parse recipe range
 
-    // Check if the ranges overlap
+    // Check if the recipe range overlaps with the selected range
     return recipeMin <= max && recipeMax >= min;
 }
+
 
 
 // Filter function
@@ -286,35 +287,33 @@ function filterRecipes() {
    // Get selected cooking time filter from dropdown
    const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
 
-   rows.forEach(row => {
-       const recipeName = row.cells[0].textContent.toLowerCase();
-       
-       // Check if recipe matches the search term
-       const matchesSearch = recipeName.includes(searchValue);
+rows.forEach(row => {
+    const recipeName = row.cells[0].textContent.toLowerCase();
 
-       // Check if recipe matches any of the selected meal filters
-       const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
+    // Check if recipe matches the search term
+    const matchesSearch = recipeName.includes(searchValue);
 
-       // Get the calorie, fat, carbs, protein and cooking time values from the table cells
-       const calorieCellValue = row.cells[2].textContent;
-       const fatCellValue = row.cells[3].textContent;
-       const carbCellValue = row.cells[4].textContent;
-       const proteinCellValue = row.cells[5].textContent;
-       const cookingTimeCellValue = row.cells[6].textContent;
+    // Check if recipe matches any of the selected meal filters
+    const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
-       // Check if recipe matches the selected filters
-       const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
-       const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
-       const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
-       const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
-       
-       // Check if recipe matches the selected cooking time filter
-	const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(Number(row.cells[7].textContent), selectedCookingTime);
+    // Get the calorie, fat, carbs, protein, and cooking time values from the table cells
+    const calorieCellValue = row.cells[2].textContent;
+    const fatCellValue = row.cells[3].textContent;
+    const carbCellValue = row.cells[4].textContent;
+    const proteinCellValue = row.cells[5].textContent;
+    const cookingTimeCellValue = row.cells[7].textContent; // Use text content of "Minutes" column
 
+    // Check if recipe matches the selected filters
+    const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
+    const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
+    const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
+    const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
+    const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
 
-       // Show row if it matches all criteria
-       row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
-   });
+    // Show row if it matches all criteria
+    row.style.display = (matchesSearch && mealMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
+});
+
 }
 </script>
 
