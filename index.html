@@ -125,16 +125,17 @@
 </div>
 
 <table id="recipeTable">
-    <thead>
+<thead>
     <tr>
         <th>Recipe Name</th>
         <th>Meal</th>
+        <th>Meat</th> 
         <th>Calories</th>
         <th>Fat</th>
         <th>Carbs</th>
         <th>Protein</th>
         <th>Method</th>
-        <th>Minutes</th> 
+        <th>Minutes</th>
         <th>Link</th>
     </tr>
 </thead>
@@ -171,16 +172,18 @@ data.forEach(recipe => {
     row.innerHTML = `
         <td>${recipe.RecipeName}</td>
         <td>${recipe.Meal}</td>
+        <td>${recipe.Meat}</td>  <!-- Add the Meat value here -->
         <td>${recipe.Calories}</td>
         <td>${recipe.Fat}</td>
         <td>${recipe.Carbs}</td>
         <td>${recipe.Protein}</td>
         <td>${recipe.Method}</td>
-        <td>${recipe.CookingTime}</td> <!-- Directly use numeric range -->
+        <td>${recipe.CookingTime}</td>
         <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
     `;
     tableBody.appendChild(row);
 });
+
     })
     .catch(error => console.error('Error loading recipes:', error));
 
