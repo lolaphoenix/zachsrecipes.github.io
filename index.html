@@ -313,8 +313,8 @@ function filterRecipes() {
         const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
 
         // Check if recipe matches any of the selected meat filters
-        const meatColumn = row.cells[2].textContent; // Adjust to the "Meat" column
-        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(meat => meatColumn.includes(meat));
+        const meatColumn = row.cells[2].textContent.split(',').map(meat => meat.trim()); // Split and trim the meats
+        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(selectedMeat => meatColumn.includes(selectedMeat));
 
         // Get other column values
         const calorieCellValue = row.cells[3].textContent;
