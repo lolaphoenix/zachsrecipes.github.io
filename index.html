@@ -91,14 +91,14 @@
 
     <!-- Cooking Time Filter as Dropdown -->
     <div class='checkbox-group'>
-    <h4>Minutes:</h4>
+    <h4>Cooking Time in Minutes:</h4>
     <select id="cookingTimeFilter" onchange="filterRecipes()">
         <option value="">Select Cooking Time Range</option>
-        <option value="0-20">0-20 minutes</option>
-        <option value="21-30">21-30 minutes</option>
-        <option value="31-40">31-40 minutes</option>
-        <option value="41-50">41-50 minutes</option>
-        <option value="51-300">51+ minutes</option>
+        <option value="0-20">0-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="51-300">51+</option>
     </select>
 </div>
 <br>
@@ -140,11 +140,11 @@ fetch('recipes.json')
 
         // Loop through each recipe in the data array
 function getCookingTimeText(cookingTime) {
-  if (cookingTime <= 20) return "Up to 20 minutes";
-  if (cookingTime <= 30) return "21-30 minutes";
-  if (cookingTime <= 40) return "31-40 minutes";
-  if (cookingTime <= 50) return "41-50 minutes";
-  return "50+ minutes";
+  if (cookingTime <= 20) return "0-20";
+  if (cookingTime <= 30) return "21-30";
+  if (cookingTime <= 40) return "31-40";
+  if (cookingTime <= 50) return "41-50";
+  return "50-300";
 }
 
 // Inside the fetch .then() block, update the row creation:
