@@ -1,25 +1,28 @@
-import fs from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 
-export default function handler(req, res) {
+const supabase = createClient(
+    'https://smftecfffubvgnxfdhyk.supabase.co', // Replace with your Supabase URL
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o' // Replace with your Supabase anon key
+);
+
+export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const recipesPath = path.join(process.cwd(), 'recipes.json');
         const newRecipe = req.body;
 
         try {
-            // Read the existing recipes
-            const recipes = JSON.parse(fs.readFileSync(recipesPath, 'utf-8'));
+            // Insert the new recipe into Supabase
+            const { data, error } = await supabase
+                .from('recipes')
+                .insert([newRecipe]);
 
-            // Add the new recipe
-            recipes.push(newRecipe);
+            if (error) {
+                return res.status(500).json({ error: error.message });
+            }
 
-            // Write back to the file
-            fs.writeFileSync(recipesPath, JSON.stringify(recipes, null, 2));
-
-            res.status(200).json({ message: 'Recipe added successfully!' });
+            res.status(200).json({ message: 'Recipe added successfully!', data });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Failed to save recipe.' });
+            res.status(500).json({ error: 'Failed to save recipe to the database.' });
         }
     } else {
         res.setHeader('Allow', ['POST']);
