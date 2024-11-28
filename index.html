@@ -22,11 +22,67 @@
     <input type="text" id="search" placeholder="Search by Recipe Name" onkeyup="filterRecipes()">
 </div>
 
-<!-- Filter Settings (same as before, but now will apply filters to fetched data) -->
+<!-- Filter Settings (Meal, Meat, Calories, etc.) -->
 <div class="filter-settings">
-    <!-- Your existing filter settings here -->
+    <!-- Meal Filter -->
+    <div class="checkbox-group">
+        <h4>Meal:</h4>
+        <label><input type="checkbox" value="Breakfast" onchange="filterRecipes()"> Breakfast</label>
+        <label><input type="checkbox" value="Lunch" onchange="filterRecipes()"> Lunch</label>
+        <label><input type="checkbox" value="Dinner" onchange="filterRecipes()"> Dinner</label>
+        <label><input type="checkbox" value="Appetizer/Side" onchange="filterRecipes()"> Appetizer/Side</label>
+        <label><input type="checkbox" value="Dessert" onchange="filterRecipes()"> Dessert</label>
+        <label><input type="checkbox" value="Bento Box" onchange="filterRecipes()"> Bento Box</label>
+    </div>
+
+    <!-- Meat Filter -->
+    <div class="checkbox-group">
+        <h4>Meat:</h4>
+        <label><input type="checkbox" value="Beef" onchange="filterRecipes()"> Beef</label>
+        <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
+        <label><input type="checkbox" value="Pork" onchange="filterRecipes()"> Pork</label>
+        <label><input type="checkbox" value="Turkey" onchange="filterRecipes()"> Turkey</label>
+        <label><input type="checkbox" value="Sausage" onchange="filterRecipes()"> Sausage</label>
+        <label><input type="checkbox" value="Bacon" onchange="filterRecipes()"> Bacon</label>
+        <label><input type="checkbox" value="Spam" onchange="filterRecipes()"> Spam</label>
+        <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
+        <label><input type="checkbox" value="Tuna" onchange="filterRecipes()"> Tuna</label>
+        <label><input type="checkbox" value="Salami" onchange="filterRecipes()"> Salami</label>
+        <label><input type="checkbox" value="Fish" onchange="filterRecipes()"> Fish</label>
+        <label><input type="checkbox" value="Salmon" onchange="filterRecipes()"> Salmon</label>
+        <label><input type="checkbox" value="None" onchange="filterRecipes()"> None</label>
+    </div>
+
+    <!-- Calories Filter -->
+    <div class="checkbox-group">
+        <h4>Calories:</h4>
+        <select id="calorieFilter" onchange="filterRecipes()">
+            <option value="">Select Calorie Range</option>
+            <option value="200cal or less">200cal or less</option>
+            <option value="201-400">201-400</option>
+            <option value="401-600">401-600</option>
+            <option value="600+">600+</option>
+        </select>
+    </div>
+
+    <!-- Fat Filter -->
+    <div class="checkbox-group">
+        <h4>Fat:</h4>
+        <select id="fatFilter" onchange="filterRecipes()">
+            <option value="">Select Fat Range</option>
+            <option value="10g or less">10g or less</option>
+            <option value="11-20">11-20</option>
+            <option value="21-30">21-30</option>
+            <option value="31-40">31-40</option>
+            <option value="41-50">41-50</option>
+            <option value="50+">50+</option>
+        </select>
+    </div>
+
+    <!-- Other filters for Carbs, Protein, etc. can follow the same pattern -->
 </div>
 
+<!-- Recipe Table -->
 <table id="recipeTable">
 <thead>
     <tr>
@@ -67,11 +123,15 @@ async function fetchRecipes() {
 
     window.recipesData = data;  // Store the data globally for filtering
 
-    // Render the recipes in the table
+    renderRecipes(data);  // Render the initial set of recipes
+}
+
+// Render recipes in the table
+function renderRecipes(recipes) {
     const tableBody = document.getElementById('tableBody');
     tableBody.innerHTML = '';  // Clear the table before rendering
 
-    data.forEach(recipe => {
+    recipes.forEach(recipe => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${recipe.RecipeName}</td>
@@ -88,66 +148,32 @@ async function fetchRecipes() {
         tableBody.appendChild(row);
     });
 }
-
-// Call fetchRecipes on page load
-window.onload = fetchRecipes;
 
 // Filter function (uses window.recipesData)
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
-    const rows = document.querySelectorAll('#recipeTable tbody tr');
-    
-    // Get selected filters (same as before)
+
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                               .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meal:')
                                .map(checkbox => checkbox.value);
 
-    const selectedMeats = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
-                               .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meat:')
-                               .map(checkbox => checkbox.value);
-
-    // Get other filters (Calories, Fat, Carbs, etc.)
     const selectedCalorie = document.getElementById('calorieFilter').value;
     const selectedFat = document.getElementById('fatFilter').value;
-    const selectedCarb = document.getElementById('carbFilter').value;
-    const selectedProtein = document.getElementById('proteinFilter').value;
-    const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
 
     // Filter the recipes data based on selected filters
     const filteredRecipes = window.recipesData.filter(recipe => {
         const matchesSearch = recipe.RecipeName.toLowerCase().includes(searchValue);
-        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => recipe.Meal.includes(meal));
-        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(meat => recipe.Meat.includes(meat));
+        const mealMatch = selectedMeals.length === 0 || selectedMeals.includes(recipe.Meal);
         const calorieMatch = !selectedCalorie || recipe.Calories === selectedCalorie;
         const fatMatch = !selectedFat || recipe.Fat === selectedFat;
-        const carbMatch = !selectedCarb || recipe.Carbs === selectedCarb;
-        const proteinMatch = !selectedProtein || recipe.Protein === selectedProtein;
-        const cookingTimeMatch = !selectedCookingTime || recipe.CookingTime === selectedCookingTime;
 
-        return matchesSearch && mealMatch && meatMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch;
+        return matchesSearch && mealMatch && calorieMatch && fatMatch;
     });
 
-    // Render filtered recipes
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';  // Clear previous results
-
-    filteredRecipes.forEach(recipe => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${recipe.RecipeName}</td>
-            <td>${recipe.Meal}</td>
-            <td>${recipe.Meat}</td>
-            <td>${recipe.Calories}</td>
-            <td>${recipe.Fat}</td>
-            <td>${recipe.Carbs}</td>
-            <td>${recipe.Protein}</td>
-            <td>${recipe.Method}</td>
-            <td>${recipe.CookingTime}</td>
-            <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
-        `;
-        tableBody.appendChild(row);
-    });
+    renderRecipes(filteredRecipes);  // Re-render the filtered recipes
 }
+
+// Call fetchRecipes on page load
+window.onload = fetchRecipes;
 </script>
 
 </body>
