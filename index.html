@@ -22,9 +22,9 @@
     <input type="text" id="search" placeholder="Search by Recipe Name" onkeyup="filterRecipes()">
 </div>
 
-<!-- Filter Settings -->
+<!-- Filter Settings (same as before, but now will apply filters to fetched data) -->
 <div class="filter-settings">
-    <!-- Filters for Meal, Meat, Calories, etc. (Same as your original code) -->
+    <!-- Your existing filter settings here -->
 </div>
 
 <table id="recipeTable">
@@ -48,8 +48,8 @@
 <script>
 // Initialize Supabase
 const supabase = supabase.createClient(
-    'https://smftecfffubvgnxfdhyk.supabase.co', // Replace with your Supabase URL
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o' // Replace with your Supabase anon key
+    'your-supabase-url', // Replace with your Supabase URL
+    'your-supabase-anon-key' // Replace with your Supabase anon key
 );
 
 // Fetch recipes from Supabase
@@ -63,8 +63,9 @@ async function fetchRecipes() {
         return;
     }
 
-    // Store the data globally for filtering
-    window.recipesData = data;
+    console.log('Fetched recipes:', data);  // Log the fetched data for debugging
+
+    window.recipesData = data;  // Store the data globally for filtering
 
     // Render the recipes in the table
     const tableBody = document.getElementById('tableBody');
@@ -91,12 +92,12 @@ async function fetchRecipes() {
 // Call fetchRecipes on page load
 window.onload = fetchRecipes;
 
-// Filter function
+// Filter function (uses window.recipesData)
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
     const rows = document.querySelectorAll('#recipeTable tbody tr');
-
-    // Get selected filter values (Meal, Meat, Calories, etc.)
+    
+    // Get selected filters (same as before)
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
                                .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meal:')
                                .map(checkbox => checkbox.value);
@@ -112,35 +113,39 @@ function filterRecipes() {
     const selectedProtein = document.getElementById('proteinFilter').value;
     const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
 
-    rows.forEach(row => {
-        const recipeName = row.cells[0].textContent.toLowerCase();
+    // Filter the recipes data based on selected filters
+    const filteredRecipes = window.recipesData.filter(recipe => {
+        const matchesSearch = recipe.RecipeName.toLowerCase().includes(searchValue);
+        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => recipe.Meal.includes(meal));
+        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(meat => recipe.Meat.includes(meat));
+        const calorieMatch = !selectedCalorie || recipe.Calories === selectedCalorie;
+        const fatMatch = !selectedFat || recipe.Fat === selectedFat;
+        const carbMatch = !selectedCarb || recipe.Carbs === selectedCarb;
+        const proteinMatch = !selectedProtein || recipe.Protein === selectedProtein;
+        const cookingTimeMatch = !selectedCookingTime || recipe.CookingTime === selectedCookingTime;
 
-        // Check if recipe matches the search term
-        const matchesSearch = recipeName.includes(searchValue);
+        return matchesSearch && mealMatch && meatMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch;
+    });
 
-        // Check if recipe matches meal filters
-        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
+    // Render filtered recipes
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';  // Clear previous results
 
-        // Check if recipe matches meat filters
-        const meatColumn = row.cells[2].textContent.split(',').map(meat => meat.trim());
-        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(selectedMeat => meatColumn.includes(selectedMeat));
-
-        // Check if recipe matches other filters
-        const calorieCellValue = row.cells[3].textContent;
-        const fatCellValue = row.cells[4].textContent;
-        const carbCellValue = row.cells[5].textContent;
-        const proteinCellValue = row.cells[6].textContent;
-        const cookingTimeCellValue = row.cells[7].textContent;
-
-        // Assuming you already have matching functions for calorie, fat, carb, protein, and cooking time ranges
-        const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
-        const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
-        const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
-        const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
-        const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
-
-        // Show row if it matches all criteria
-        row.style.display = (matchesSearch && mealMatch && meatMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
+    filteredRecipes.forEach(recipe => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${recipe.RecipeName}</td>
+            <td>${recipe.Meal}</td>
+            <td>${recipe.Meat}</td>
+            <td>${recipe.Calories}</td>
+            <td>${recipe.Fat}</td>
+            <td>${recipe.Carbs}</td>
+            <td>${recipe.Protein}</td>
+            <td>${recipe.Method}</td>
+            <td>${recipe.CookingTime}</td>
+            <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
+        `;
+        tableBody.appendChild(row);
     });
 }
 </script>
