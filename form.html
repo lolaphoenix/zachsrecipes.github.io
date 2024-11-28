@@ -107,32 +107,40 @@
 
 </script>
 <script>
-async function addRecipe() {
-    const form = document.getElementById('recipeForm');
-    const formData = new FormData(form);
-    const newRecipe = {};
+    async function addRecipe() {
+        const form = document.getElementById('recipeForm');
+        const formData = new FormData(form);
+        const newRecipe = {};
 
-    formData.forEach((value, key) => {
-        newRecipe[key] = value;
-    });
-
-    try {
-        const response = await fetch('/api/addRecipe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newRecipe),
+        // Collect form data
+        formData.forEach((value, key) => {
+            newRecipe[key] = value;
         });
 
-        if (response.ok) {
-            alert('Recipe added successfully!');
-        } else {
-            alert('Failed to add recipe.');
+        try {
+            // Send the data to the serverless function
+            const response = await fetch('/api/addRecipe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newRecipe),  // Send the data as JSON
+            });
+
+            // Parse the response from the server
+            const data = await response.json();
+
+            // Check if the response is successful
+            if (response.ok) {
+                alert('Recipe added successfully!');
+            } else {
+                alert(`Failed to add recipe: ${data.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the form.');
         }
-    } catch (error) {
-        console.error(error);
-        alert('An error occurred.');
     }
-}
 </script>
 
 </body>
