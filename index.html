@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Finder</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; }
         .filter { margin-bottom: 20px; }
@@ -22,9 +21,10 @@
     <input type="text" id="search" placeholder="Search by Recipe Name" onkeyup="filterRecipes()">
 </div>
 
-<!-- Filter Settings (Meal, Meat, Calories, etc.) -->
+<!-- Filter Settings -->
 <div class="filter-settings">
-    <!-- Meal Filter -->
+    <h3>Filter by:</h3>
+
     <div class="checkbox-group">
         <h4>Meal:</h4>
         <label><input type="checkbox" value="Breakfast" onchange="filterRecipes()"> Breakfast</label>
@@ -35,25 +35,25 @@
         <label><input type="checkbox" value="Bento Box" onchange="filterRecipes()"> Bento Box</label>
     </div>
 
-    <!-- Meat Filter -->
-    <div class="checkbox-group">
-        <h4>Meat:</h4>
-        <label><input type="checkbox" value="Beef" onchange="filterRecipes()"> Beef</label>
-        <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
-        <label><input type="checkbox" value="Pork" onchange="filterRecipes()"> Pork</label>
-        <label><input type="checkbox" value="Turkey" onchange="filterRecipes()"> Turkey</label>
-        <label><input type="checkbox" value="Sausage" onchange="filterRecipes()"> Sausage</label>
-        <label><input type="checkbox" value="Bacon" onchange="filterRecipes()"> Bacon</label>
-        <label><input type="checkbox" value="Spam" onchange="filterRecipes()"> Spam</label>
-        <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
-        <label><input type="checkbox" value="Tuna" onchange="filterRecipes()"> Tuna</label>
-        <label><input type="checkbox" value="Salami" onchange="filterRecipes()"> Salami</label>
-        <label><input type="checkbox" value="Fish" onchange="filterRecipes()"> Fish</label>
-        <label><input type="checkbox" value="Salmon" onchange="filterRecipes()"> Salmon</label>
-        <label><input type="checkbox" value="None" onchange="filterRecipes()"> None</label>
-    </div>
+<div class="checkbox-group">
+    <h4>Meat:</h4>
+    <label><input type="checkbox" value="Beef" onchange="filterRecipes()"> Beef</label>
+    <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
+    <label><input type="checkbox" value="Pork" onchange="filterRecipes()"> Pork</label>
+    <label><input type="checkbox" value="Turkey" onchange="filterRecipes()"> Turkey</label>
+    <label><input type="checkbox" value="Sausage" onchange="filterRecipes()"> Sausage</label>
+    <label><input type="checkbox" value="Bacon" onchange="filterRecipes()"> Bacon</label>
+    <label><input type="checkbox" value="Spam" onchange="filterRecipes()"> Spam</label>
+    <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
+    <label><input type="checkbox" value="Tuna" onchange="filterRecipes()"> Tuna</label>
+    <label><input type="checkbox" value="Salami" onchange="filterRecipes()"> Salami</label>
+    <label><input type="checkbox" value="Fish" onchange="filterRecipes()"> Fish</label>
+    <label><input type="checkbox" value="Salmon" onchange="filterRecipes()"> Salmon</label>
+    <label><input type="checkbox" value="None" onchange="filterRecipes()"> None</label>
+</div>
 
-    <!-- Calories Filter -->
+
+    <!-- Calories Filter as Dropdown -->
     <div class="checkbox-group">
         <h4>Calories:</h4>
         <select id="calorieFilter" onchange="filterRecipes()">
@@ -65,7 +65,7 @@
         </select>
     </div>
 
-    <!-- Fat Filter -->
+    <!-- Fat Filter as Dropdown -->
     <div class="checkbox-group">
         <h4>Fat:</h4>
         <select id="fatFilter" onchange="filterRecipes()">
@@ -79,10 +79,62 @@
         </select>
     </div>
 
-    <!-- Other filters for Carbs, Protein, etc. can follow the same pattern -->
+    <!-- Carbs Filter as Dropdown -->
+    <div class='checkbox-group'>
+        <h4>Carbs:</h4>
+        <select id='carbFilter' onchange='filterRecipes()'>
+            <option value=''>Select Carb Range</option>
+            <option value='10g or less'>10g or less</option>
+            <option value='11-20'>11-20</option>
+            <option value='21-30'>21-30</option>
+            <option value='31-40'>31-40</option>
+            <option value='41-50'>41-50</option>
+            <option value='50+'>50+</option>
+        </select>
+    </div>
+
+    <!-- Protein Filter as Dropdown -->
+    <div class='checkbox-group'>
+        <h4>Protein:</h4>
+        <select id='proteinFilter' onchange='filterRecipes()'>
+            <option value=''>Select Protein Range</option>
+            <option value='10g or less'>10g or less</option>
+            <option value='11-20'>11-20</option>
+            <option value='21-30'>21-30</option>
+            <option value='31-40'>31-40</option>
+            <option value='41-50'>41-50</option>
+            <option value='50+'>50+</option>
+        </select>
+    </div>
+
+    <!-- Cooking Time Filter as Dropdown -->
+    <div class='checkbox-group'>
+    <h4>Cooking Time in Minutes:</h4>
+    <select id="cookingTimeFilter" onchange="filterRecipes()">
+        <option value="">Select Cooking Time Range</option>
+        <option value="0-20">0-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="51-300">51+</option>
+    </select>
 </div>
 
-<!-- Recipe Table -->
+<div class="checkbox-group">
+    <h4>Method:</h4>
+    <label><input type="checkbox" value="Stovetop" onchange="filterRecipes()"> Stovetop</label>
+    <label><input type="checkbox" value="Baking" onchange="filterRecipes()"> Baking</label>
+    <label><input type="checkbox" value="Air Fryer" onchange="filterRecipes()"> Air Fryer</label>
+    <label><input type="checkbox" value="Slow Cooker" onchange="filterRecipes()"> Slow Cooker</label>
+    <label><input type="checkbox" value="Rice Cooker" onchange="filterRecipes()"> Rice Cooker</label>
+    <label><input type="checkbox" value="Just Mixing" onchange="filterRecipes()"> Just Mixing</label>
+    <label><input type="checkbox" value="Microwave" onchange="filterRecipes()"> Microwave</label>
+    <label><input type="checkbox" value="Overnight" onchange="filterRecipes()"> Overnight</label>
+    <label><input type="checkbox" value="Marinate" onchange="filterRecipes()"> Marinate</label>
+</div>
+<br>  
+</div>
+
 <table id="recipeTable">
 <thead>
     <tr>
@@ -102,79 +154,209 @@
 </table>
 
 <script>
-// Initialize Supabase
-const supabase = supabase.createClient(
-    'your-supabase-url', // Replace with your Supabase URL
-    'your-supabase-anon-key' // Replace with your Supabase anon key
-);
+// Load recipes from the JSON file
+fetch('recipes.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const tableBody = document.getElementById('tableBody');
+        
+        // Store the data globally for filtering
+        window.recipesData = data;
 
-// Fetch recipes from Supabase
-async function fetchRecipes() {
-    const { data, error } = await supabase
-        .from('recipes')  // The name of your Supabase table
-        .select('*');  // Select all columns
+        // Loop through each recipe in the data array
+function getCookingTimeText(cookingTime) {
+  if (cookingTime <= 20) return "0-20";
+  if (cookingTime <= 30) return "21-30";
+  if (cookingTime <= 40) return "31-40";
+  if (cookingTime <= 50) return "41-50";
+  return "50-300";
+}
 
-    if (error) {
-        console.error('Error fetching recipes:', error);
-        return;
+// Inside the fetch .then() block, update the row creation:
+data.forEach(recipe => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${recipe.RecipeName}</td>
+        <td>${recipe.Meal}</td>
+        <td>${recipe.Meat}</td>  <!-- Add the Meat value here -->
+        <td>${recipe.Calories}</td>
+        <td>${recipe.Fat}</td>
+        <td>${recipe.Carbs}</td>
+        <td>${recipe.Protein}</td>
+        <td>${recipe.Method}</td>
+        <td>${recipe.CookingTime}</td>
+        <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
+    `;
+    tableBody.appendChild(row);
+});
+
+    })
+    .catch(error => console.error('Error loading recipes:', error));
+
+// Helper function to check if a calorie value matches a selected range
+function matchesCalorieRange(calorieValue, selectedCalorie) {
+    const numericCalories = parseInt(calorieValue.split(" ")[0]); // Get numeric part of the string
+
+    switch (selectedCalorie) {
+        case "200cal or less":
+            return numericCalories <= 200;
+        case "201-400":
+            return numericCalories > 200 && numericCalories <= 400;
+        case "401-600":
+            return numericCalories > 400 && numericCalories <= 600;
+        case "600+":
+            return numericCalories > 600;
+        default:
+            return false;
     }
-
-    console.log('Fetched recipes:', data);  // Log the fetched data for debugging
-
-    window.recipesData = data;  // Store the data globally for filtering
-
-    renderRecipes(data);  // Render the initial set of recipes
 }
 
-// Render recipes in the table
-function renderRecipes(recipes) {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';  // Clear the table before rendering
+// Helper function to check if a fat value matches a selected range
+function matchesFatRange(fatValue, selectedFat) {
+    const numericFat = parseInt(fatValue.split(" ")[0]); // Get numeric part of the string
 
-    recipes.forEach(recipe => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${recipe.RecipeName}</td>
-            <td>${recipe.Meal}</td>
-            <td>${recipe.Meat}</td>
-            <td>${recipe.Calories}</td>
-            <td>${recipe.Fat}</td>
-            <td>${recipe.Carbs}</td>
-            <td>${recipe.Protein}</td>
-            <td>${recipe.Method}</td>
-            <td>${recipe.CookingTime}</td>
-            <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
-        `;
-        tableBody.appendChild(row);
-    });
+    switch (selectedFat) {
+        case "10g or less":
+            return numericFat <= 10;
+        case "11-20":
+            return numericFat > 10 && numericFat <= 20;
+        case "21-30":
+            return numericFat > 20 && numericFat <= 30;
+        case "31-40":
+            return numericFat > 30 && numericFat <= 40;
+        case "41-50":
+            return numericFat > 40 && numericFat <= 50;
+        case "50+":
+            return numericFat > 50;
+        default:
+            return false;
+    }
 }
 
-// Filter function (uses window.recipesData)
+// Helper function to check if a carbs value matches a selected range
+function matchesCarbRange(carbValue, selectedCarb) {
+   const numericCarbs = parseInt(carbValue.split(" ")[0]); // Get numeric part of the string
+
+   switch (selectedCarb) {
+       case "10g or less":
+           return numericCarbs <= 10;
+       case "11-20":
+           return numericCarbs > 10 && numericCarbs <= 20;
+       case "21-30":
+           return numericCarbs > 20 && numericCarbs <= 30;
+       case "31-40":
+           return numericCarbs > 30 && numericCarbs <= 40;
+       case "41-50":
+           return numericCarbs > 40 && numericCarbs <= 50;
+       case "50+":
+           return numericCarbs > 50;
+       default:
+           return false;
+   }
+}
+
+// Helper function to check if a protein value matches a selected range
+function matchesProteinRange(proteinValue, selectedProtein) {
+   const numericProtein = parseInt(proteinValue.split(" ")[0]); // Get numeric part of the string
+
+   switch (selectedProtein) {
+       case "10g or less":
+           return numericProtein <= 10;
+       case "11-20":
+           return numericProtein > 10 && numericProtein <= 20;
+       case "21-30":
+           return numericProtein > 20 && numericProtein <= 30;
+       case "31-40":
+           return numericProtein > 30 && numericProtein <= 40;
+       case "41-50":
+           return numericProtein > 40 && numericProtein <= 50;
+       case "50+":
+           return numericProtein > 50;
+       default:
+           return false;
+   }
+}
+
+// Helper function to check if cooking time matches the selected range
+function matchesCookingTime(cookingTimeRange, selectedCookingTime) {
+    if (!selectedCookingTime) return true; // No filter applied
+
+    const [min, max] = selectedCookingTime.split("-").map(Number); // Parse selected range
+    const [recipeMin, recipeMax] = cookingTimeRange.split("-").map(Number); // Parse recipe range
+
+    // Check if the recipe range overlaps with the selected range
+    return recipeMin <= max && recipeMax >= min;
+}
+
+
+
+// Filter function
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
+    const rows = document.querySelectorAll('#recipeTable tbody tr');
 
+    // Get selected meal filters
     const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                               .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meal:')
                                .map(checkbox => checkbox.value);
 
+    // Get selected meat filters
+    const selectedMeats = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                               .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meat:')
+                               .map(checkbox => checkbox.value);
+
+    // Get selected method filters
+    const selectedMethods = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+                                 .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Method:')
+                                 .map(checkbox => checkbox.value);
+
+    // Get other filters
     const selectedCalorie = document.getElementById('calorieFilter').value;
     const selectedFat = document.getElementById('fatFilter').value;
+    const selectedCarb = document.getElementById('carbFilter').value;
+    const selectedProtein = document.getElementById('proteinFilter').value;
+    const selectedCookingTime = document.getElementById('cookingTimeFilter').value;
 
-    // Filter the recipes data based on selected filters
-    const filteredRecipes = window.recipesData.filter(recipe => {
-        const matchesSearch = recipe.RecipeName.toLowerCase().includes(searchValue);
-        const mealMatch = selectedMeals.length === 0 || selectedMeals.includes(recipe.Meal);
-        const calorieMatch = !selectedCalorie || recipe.Calories === selectedCalorie;
-        const fatMatch = !selectedFat || recipe.Fat === selectedFat;
+    rows.forEach(row => {
+        const recipeName = row.cells[0].textContent.toLowerCase();
 
-        return matchesSearch && mealMatch && calorieMatch && fatMatch;
+        // Check if recipe matches the search term
+        const matchesSearch = recipeName.includes(searchValue);
+
+        // Check if recipe matches any of the selected meal filters
+        const mealMatch = selectedMeals.length === 0 || selectedMeals.some(meal => row.cells[1].textContent.includes(meal));
+
+        // Check if recipe matches any of the selected meat filters
+        const meatColumn = row.cells[2].textContent.split(',').map(meat => meat.trim()); // Split and trim the meats
+        const meatMatch = selectedMeats.length === 0 || selectedMeats.some(selectedMeat => meatColumn.includes(selectedMeat));
+
+	// Check if recipe matches any of the selected method filters
+	const methodColumn = row.cells[7].textContent.split(',').map(method => method.trim()); // Adjust the index if necessary
+	const methodMatch = selectedMethods.length === 0 || selectedMethods.some(selectedMethod => methodColumn.includes(selectedMethod));
+
+        // Get other column values
+        const calorieCellValue = row.cells[3].textContent;
+        const fatCellValue = row.cells[4].textContent;
+        const carbCellValue = row.cells[5].textContent;
+        const proteinCellValue = row.cells[7].textContent;
+        const cookingTimeCellValue = row.cells[8].textContent;
+
+        // Check if recipe matches other filters
+        const calorieMatch = !selectedCalorie || matchesCalorieRange(calorieCellValue, selectedCalorie);
+        const fatMatch = !selectedFat || matchesFatRange(fatCellValue, selectedFat);
+        const carbMatch = !selectedCarb || matchesCarbRange(carbCellValue, selectedCarb);
+        const proteinMatch = !selectedProtein || matchesProteinRange(proteinCellValue, selectedProtein);
+        const cookingTimeMatch = !selectedCookingTime || matchesCookingTime(cookingTimeCellValue, selectedCookingTime);
+
+        // Show row if it matches all criteria
+        row.style.display = (matchesSearch && mealMatch && meatMatch && methodMatch && calorieMatch && fatMatch && carbMatch && proteinMatch && cookingTimeMatch) ? '' : 'none';
     });
-
-    renderRecipes(filteredRecipes);  // Re-render the filtered recipes
 }
-
-// Call fetchRecipes on page load
-window.onload = fetchRecipes;
 </script>
 
-</body>
-</html>
+</body></html>
