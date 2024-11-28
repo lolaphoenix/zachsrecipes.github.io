@@ -88,18 +88,23 @@
 
 <script>
     function addRecipe() {
-        const form = document.getElementById('recipeForm');
-        const formData = new FormData(form);
-        const newRecipe = {};
+    const form = document.getElementById('recipeForm');
+    const formData = new FormData(form);
+    const newRecipe = {};
 
-        // Process form data into a JSON object
-        formData.forEach((value, key) => {
-            newRecipe[key] = value;
-        });
+    // Process form data into a JSON object
+    formData.forEach((value, key) => {
+        newRecipe[key] = value;
+    });
 
+    // Avoid UI blocking by deferring logging
+    setTimeout(() => {
         console.log(JSON.stringify(newRecipe, null, 2));
-        alert('Recipe JSON generated. Check the console for the result.');
-    }
+    }, 0);
+
+    alert('Recipe JSON generated. Check the console for the result.');
+}
+
 </script>
 
 </body>
