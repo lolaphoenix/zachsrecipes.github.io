@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Input Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { max-width: 600px; margin: 0 auto; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; margin-bottom: 15px; padding: 8px; font-size: 1em; }
+        button { padding: 10px 20px; font-size: 1em; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<h1>Add a New Recipe</h1>
+
+<form id="recipeForm">
+    <label for="recipeName">Recipe Name</label>
+    <input type="text" id="recipeName" name="RecipeName" required>
+
+    <label for="meal">Meal (comma-separated)</label>
+    <input type="text" id="meal" name="Meal" required>
+
+    <label for="meat">Meat (comma-separated)</label>
+    <input type="text" id="meat" name="Meat">
+
+    <label for="calories">Calories</label>
+    <select id="calories" name="Calories">
+        <option value="200cal or less">200cal or less</option>
+        <option value="201-400">201-400</option>
+        <option value="401-600">401-600</option>
+        <option value="600+">600+</option>
+    </select>
+
+    <label for="fat">Fat</label>
+    <select id="fat" name="Fat">
+        <option value="10g or less">10g or less</option>
+        <option value="11-20">11-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="50+">50+</option>
+    </select>
+
+    <label for="carbs">Carbs</label>
+    <select id="carbs" name="Carbs">
+        <option value="10g or less">10g or less</option>
+        <option value="11-20">11-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="50+">50+</option>
+    </select>
+
+    <label for="protein">Protein</label>
+    <select id="protein" name="Protein">
+        <option value="10g or less">10g or less</option>
+        <option value="11-20">11-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="50+">50+</option>
+    </select>
+
+    <label for="method">Method (comma-separated)</label>
+    <input type="text" id="method" name="Method" required>
+
+    <label for="cookingTime">Cooking Time (e.g., 0-20)</label>
+    <input type="text" id="cookingTime" name="CookingTime" required>
+
+    <label for="link">Link</label>
+    <input type="url" id="link" name="Link" required>
+
+    <button type="button" onclick="addRecipe()">Add Recipe</button>
+</form>
+
+<script>
+    function addRecipe() {
+        // Collect form data
+        const form = document.getElementById('recipeForm');
+        const formData = new FormData(form);
+        const newRecipe = {};
+
+        formData.forEach((value, key) => {
+            newRecipe[key] = value;
+        });
+
+        // Output JSON for manual updating
+        console.log(JSON.stringify(newRecipe, null, 2));
+        alert('Recipe JSON generated. Check the console for the result.');
+    }
+</script>
+
+</body>
+</html>
