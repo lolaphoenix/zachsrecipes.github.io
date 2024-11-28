@@ -7,18 +7,9 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         form { max-width: 600px; margin: 0 auto; }
-        label { font-weight: bold; }
-        .checkbox-group { margin-bottom: 20px; }
-        .checkbox-group h4 { font-size: 1.1em; margin-bottom: 10px; }
-        .checkbox-group .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 10px;
-        }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, select, textarea { width: 100%; margin-bottom: 15px; padding: 8px; font-size: 1em; }
+        .hint { font-size: 0.9em; color: #666; margin-bottom: 10px; }
         button { padding: 10px 20px; font-size: 1em; cursor: pointer; }
     </style>
 </head>
@@ -30,62 +21,13 @@
     <label for="recipeName">Recipe Name</label>
     <input type="text" id="recipeName" name="RecipeName" required>
 
-    <div class="checkbox-group">
-        <h4>Meal:</h4>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meal" value="Breakfast" id="meal-breakfast">
-            <label for="meal-breakfast">Breakfast</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meal" value="Lunch" id="meal-lunch">
-            <label for="meal-lunch">Lunch</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meal" value="Dinner" id="meal-dinner">
-            <label for="meal-dinner">Dinner</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meal" value="Appetizer/Side" id="meal-appetizer">
-            <label for="meal-appetizer">Appetizer/Side</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meal" value="Dessert" id="meal-dessert">
-            <label for="meal-dessert">Dessert</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meal" value="Bento Box" id="meal-bento">
-            <label for="meal-bento">Bento Box</label>
-        </div>
-    </div>
+    <label for="meal">Meal</label>
+    <p class="hint">Options: Breakfast, Lunch, Dinner, Appetizer/Side, Dessert, Bento Box</p>
+    <input type="text" id="meal" name="Meal" placeholder="Comma-separated values" required>
 
-    <div class="checkbox-group">
-        <h4>Meat:</h4>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meat" value="Beef" id="meat-beef">
-            <label for="meat-beef">Beef</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meat" value="Chicken" id="meat-chicken">
-            <label for="meat-chicken">Chicken</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meat" value="Pork" id="meat-pork">
-            <label for="meat-pork">Pork</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meat" value="Turkey" id="meat-turkey">
-            <label for="meat-turkey">Turkey</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meat" value="Sausage" id="meat-sausage">
-            <label for="meat-sausage">Sausage</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Meat" value="Bacon" id="meat-bacon">
-            <label for="meat-bacon">Bacon</label>
-        </div>
-        <!-- Add additional checkbox items for other meat options -->
-    </div>
+    <label for="meat">Meat</label>
+    <p class="hint">Options: Beef, Chicken, Pork, Turkey, Sausage, Bacon, Spam, Shrimp, Tuna, Salami, Fish, Salmon, None</p>
+    <input type="text" id="meat" name="Meat" placeholder="Comma-separated values">
 
     <label for="calories">Calories</label>
     <select id="calories" name="Calories">
@@ -95,26 +37,42 @@
         <option value="600+">600+</option>
     </select>
 
-    <div class="checkbox-group">
-        <h4>Method:</h4>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Method" value="Stovetop" id="method-stovetop">
-            <label for="method-stovetop">Stovetop</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Method" value="Baking" id="method-baking">
-            <label for="method-baking">Baking</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Method" value="Air Fryer" id="method-airfryer">
-            <label for="method-airfryer">Air Fryer</label>
-        </div>
-        <div class="checkbox-item">
-            <input type="checkbox" name="Method" value="Slow Cooker" id="method-slowcooker">
-            <label for="method-slowcooker">Slow Cooker</label>
-        </div>
-        <!-- Add additional checkbox items for other method options -->
-    </div>
+    <label for="fat">Fat</label>
+    <select id="fat" name="Fat">
+        <option value="10g or less">10g or less</option>
+        <option value="11-20">11-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="50+">50+</option>
+    </select>
+
+    <label for="carbs">Carbs</label>
+    <select id="carbs" name="Carbs">
+        <option value="10g or less">10g or less</option>
+        <option value="11-20">11-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="50+">50+</option>
+    </select>
+
+    <label for="protein">Protein</label>
+    <select id="protein" name="Protein">
+        <option value="10g or less">10g or less</option>
+        <option value="11-20">11-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="50+">50+</option>
+    </select>
+
+    <label for="method">Method</label>
+    <p class="hint">Options: Stovetop, Baking, Air Fryer, Slow Cooker, Rice Cooker, Just Mixing, Microwave, Overnight, Marinate</p>
+    <input type="text" id="method" name="Method" placeholder="Comma-separated values" required>
+
+    <label for="cookingTime">Cooking Time (e.g., 0-20)</label>
+    <input type="text" id="cookingTime" name="CookingTime" required>
 
     <label for="link">Link</label>
     <input type="url" id="link" name="Link" required>
@@ -128,16 +86,9 @@
         const formData = new FormData(form);
         const newRecipe = {};
 
-        // Process checkboxes
-        ['Meal', 'Meat', 'Method'].forEach(field => {
-            newRecipe[field] = formData.getAll(field).join(', ');
-        });
-
-        // Process other fields
+        // Process form data into a JSON object
         formData.forEach((value, key) => {
-            if (!['Meal', 'Meat', 'Method'].includes(key)) {
-                newRecipe[key] = value;
-            }
+            newRecipe[key] = value;
         });
 
         console.log(JSON.stringify(newRecipe, null, 2));
