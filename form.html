@@ -71,8 +71,14 @@
     <p class="hint">Options: Stovetop, Baking, Air Fryer, Slow Cooker, Rice Cooker, Just Mixing, Microwave, Overnight, Marinate</p>
     <input type="text" id="method" name="Method" placeholder="Comma-separated values" required>
 
-    <label for="cookingTime">Cooking Time (e.g., 0-20)</label>
-    <input type="text" id="cookingTime" name="CookingTime" required>
+    <label for="cookingTime">Cooking Time</label>
+    <select id="cookingTime" name="CookingTime" required>
+        <option value="0-20">0-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="51-300">51-300</option>
+    </select>
 
     <label for="link">Link</label>
     <input type="url" id="link" name="Link" required>
