@@ -106,6 +106,34 @@
 }
 
 </script>
+<script>
+async function addRecipe() {
+    const form = document.getElementById('recipeForm');
+    const formData = new FormData(form);
+    const newRecipe = {};
+
+    formData.forEach((value, key) => {
+        newRecipe[key] = value;
+    });
+
+    try {
+        const response = await fetch('/api/addRecipe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newRecipe),
+        });
+
+        if (response.ok) {
+            alert('Recipe added successfully!');
+        } else {
+            alert('Failed to add recipe.');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('An error occurred.');
+    }
+}
+</script>
 
 </body>
 </html>
