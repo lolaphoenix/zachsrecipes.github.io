@@ -9,7 +9,8 @@
         form { max-width: 600px; margin: 0 auto; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         .checkbox-group { margin-bottom: 15px; }
-        .checkbox-group label { font-weight: normal; display: inline-block; margin-right: 10px; }
+        .checkbox-group h4 { font-size: 1.1em; margin-bottom: 10px; }
+        .checkbox-group label { display: block; margin-bottom: 5px; font-weight: normal; }
         input, select, textarea { width: 100%; margin-bottom: 15px; padding: 8px; font-size: 1em; }
         button { padding: 10px 20px; font-size: 1em; cursor: pointer; }
     </style>
@@ -23,7 +24,7 @@
     <input type="text" id="recipeName" name="RecipeName" required>
 
     <div class="checkbox-group">
-        <label>Meal:</label><br>
+        <h4>Meal:</h4>
         <label><input type="checkbox" name="Meal" value="Breakfast"> Breakfast</label>
         <label><input type="checkbox" name="Meal" value="Lunch"> Lunch</label>
         <label><input type="checkbox" name="Meal" value="Dinner"> Dinner</label>
@@ -33,7 +34,7 @@
     </div>
 
     <div class="checkbox-group">
-        <label>Meat:</label><br>
+        <h4>Meat:</h4>
         <label><input type="checkbox" name="Meat" value="Beef"> Beef</label>
         <label><input type="checkbox" name="Meat" value="Chicken"> Chicken</label>
         <label><input type="checkbox" name="Meat" value="Pork"> Pork</label>
@@ -88,7 +89,7 @@
     </select>
 
     <div class="checkbox-group">
-        <label>Method:</label><br>
+        <h4>Method:</h4>
         <label><input type="checkbox" name="Method" value="Stovetop"> Stovetop</label>
         <label><input type="checkbox" name="Method" value="Baking"> Baking</label>
         <label><input type="checkbox" name="Method" value="Air Fryer"> Air Fryer</label>
@@ -111,7 +112,6 @@
 
 <script>
     function addRecipe() {
-        // Collect form data
         const form = document.getElementById('recipeForm');
         const formData = new FormData(form);
         const newRecipe = {};
@@ -128,7 +128,6 @@
             }
         });
 
-        // Output JSON for manual updating
         console.log(JSON.stringify(newRecipe, null, 2));
         alert('Recipe JSON generated. Check the console for the result.');
     }
