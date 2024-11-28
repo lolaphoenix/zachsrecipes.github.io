@@ -8,6 +8,8 @@
         body { font-family: Arial, sans-serif; margin: 20px; }
         form { max-width: 600px; margin: 0 auto; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .checkbox-group { margin-bottom: 15px; }
+        .checkbox-group label { font-weight: normal; display: inline-block; margin-right: 10px; }
         input, select, textarea { width: 100%; margin-bottom: 15px; padding: 8px; font-size: 1em; }
         button { padding: 10px 20px; font-size: 1em; cursor: pointer; }
     </style>
@@ -20,11 +22,32 @@
     <label for="recipeName">Recipe Name</label>
     <input type="text" id="recipeName" name="RecipeName" required>
 
-    <label for="meal">Meal (comma-separated)</label>
-    <input type="text" id="meal" name="Meal" required>
+    <div class="checkbox-group">
+        <label>Meal:</label><br>
+        <label><input type="checkbox" name="Meal" value="Breakfast"> Breakfast</label>
+        <label><input type="checkbox" name="Meal" value="Lunch"> Lunch</label>
+        <label><input type="checkbox" name="Meal" value="Dinner"> Dinner</label>
+        <label><input type="checkbox" name="Meal" value="Appetizer/Side"> Appetizer/Side</label>
+        <label><input type="checkbox" name="Meal" value="Dessert"> Dessert</label>
+        <label><input type="checkbox" name="Meal" value="Bento Box"> Bento Box</label>
+    </div>
 
-    <label for="meat">Meat (comma-separated)</label>
-    <input type="text" id="meat" name="Meat">
+    <div class="checkbox-group">
+        <label>Meat:</label><br>
+        <label><input type="checkbox" name="Meat" value="Beef"> Beef</label>
+        <label><input type="checkbox" name="Meat" value="Chicken"> Chicken</label>
+        <label><input type="checkbox" name="Meat" value="Pork"> Pork</label>
+        <label><input type="checkbox" name="Meat" value="Turkey"> Turkey</label>
+        <label><input type="checkbox" name="Meat" value="Sausage"> Sausage</label>
+        <label><input type="checkbox" name="Meat" value="Bacon"> Bacon</label>
+        <label><input type="checkbox" name="Meat" value="Spam"> Spam</label>
+        <label><input type="checkbox" name="Meat" value="Shrimp"> Shrimp</label>
+        <label><input type="checkbox" name="Meat" value="Tuna"> Tuna</label>
+        <label><input type="checkbox" name="Meat" value="Salami"> Salami</label>
+        <label><input type="checkbox" name="Meat" value="Fish"> Fish</label>
+        <label><input type="checkbox" name="Meat" value="Salmon"> Salmon</label>
+        <label><input type="checkbox" name="Meat" value="None"> None</label>
+    </div>
 
     <label for="calories">Calories</label>
     <select id="calories" name="Calories">
@@ -64,8 +87,18 @@
         <option value="50+">50+</option>
     </select>
 
-    <label for="method">Method (comma-separated)</label>
-    <input type="text" id="method" name="Method" required>
+    <div class="checkbox-group">
+        <label>Method:</label><br>
+        <label><input type="checkbox" name="Method" value="Stovetop"> Stovetop</label>
+        <label><input type="checkbox" name="Method" value="Baking"> Baking</label>
+        <label><input type="checkbox" name="Method" value="Air Fryer"> Air Fryer</label>
+        <label><input type="checkbox" name="Method" value="Slow Cooker"> Slow Cooker</label>
+        <label><input type="checkbox" name="Method" value="Rice Cooker"> Rice Cooker</label>
+        <label><input type="checkbox" name="Method" value="Just Mixing"> Just Mixing</label>
+        <label><input type="checkbox" name="Method" value="Microwave"> Microwave</label>
+        <label><input type="checkbox" name="Method" value="Overnight"> Overnight</label>
+        <label><input type="checkbox" name="Method" value="Marinate"> Marinate</label>
+    </div>
 
     <label for="cookingTime">Cooking Time (e.g., 0-20)</label>
     <input type="text" id="cookingTime" name="CookingTime" required>
@@ -83,8 +116,16 @@
         const formData = new FormData(form);
         const newRecipe = {};
 
+        // Process checkboxes
+        ['Meal', 'Meat', 'Method'].forEach(field => {
+            newRecipe[field] = formData.getAll(field).join(', ');
+        });
+
+        // Process other fields
         formData.forEach((value, key) => {
-            newRecipe[key] = value;
+            if (!['Meal', 'Meat', 'Method'].includes(key)) {
+                newRecipe[key] = value;
+            }
         });
 
         // Output JSON for manual updating
