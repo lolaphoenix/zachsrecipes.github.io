@@ -140,39 +140,26 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Supabase client after DOM is loaded
     const supabaseClient = supabase.createClient(
         'https://smftecfffubvgnxfdhyk.supabase.co', 
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o'
     );
 
-    // Fetch recipes from Supabase
     function fetchRecipes() {
         supabaseClient
             .from('recipes')
             .select('*')
             .then(function(response) {
-                console.log('Full Supabase Response:', response); // Detailed logging
-
                 const { data: recipes, error } = response;
 
                 if (error) {
-                    console.error('Detailed Supabase Error:', error);
+                    console.error('Supabase Error:', error);
                     throw error;
                 }
 
                 const tableBody = document.getElementById('tableBody');
-                if (!tableBody) {
-                    console.error('Table body element not found!');
-                    return;
-                }
-
-                tableBody.innerHTML = ''; // Clear existing rows
+                tableBody.innerHTML = '';
                 
-                // Store the data globally for filtering
-                window.recipesData = recipes;
-
-                // Render recipes
                 recipes.forEach(recipe => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -190,8 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     tableBody.appendChild(row);
                 });
 
-                // Safe filtering with error handling
-                safeFilterRecipes();
+                filterRecipes();
             })
             .catch(function(error) {
                 console.error('Comprehensive Error:', error);
@@ -199,42 +185,109 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Safe filtering function with error handling
-    function safeFilterRecipes() {
-        try {
-            // Check if all elements exist before accessing
-            const searchInput = document.getElementById('search');
-            const calorieFilter = document.getElementById('calorieFilter');
-            const fatFilter = document.getElementById('fatFilter');
-            const carbFilter = document.getElementById('carbFilter');
-            const proteinFilter = document.getElementById('proteinFilter');
-            const cookingTimeFilter = document.getElementById('cookingTimeFilter');
+    function filterRecipes() {
+        const searchValue = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('#recipeTable tbody tr');
 
-            // Verify all required elements exist
-            const requiredElements = [
-                searchInput, calorieFilter, fatFilter, 
-                carbFilter, proteinFilter, cookingTimeFilter
-            ];
+        const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked'))
+            .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === 'Meal:')
+            .map(checkbox => checkbox.value);
 
-            if (requiredElements.some(el => el === null)) {
-                console.error('One or more filter elements are missing:', requiredElements);
-                return;
-            }
+        const selectedMeats = Array.from(document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked'))
+            .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === 'Meat:')
+            .map(checkbox => checkbox.value);
 
-            filterRecipes();
-        } catch (error) {
-            console.error('Error in safe filtering:', error);
+        const calorieFilter = document.getElementById('calorieFilter').value;
+        const fatFilter = document.getElementById('fatFilter').value;
+        const carbFilter = document.getElementById('carbFilter').value;
+        const proteinFilter = document.getElementById('proteinFilter').value;
+        const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const recipeName = cells[0].textContent.toLowerCase();
+            const meal = cells[1].textContent;
+            const meat = cells[2].textContent;
+            const calories = cells[3].textContent;
+            const fat = cells[4].textContent;
+            const carbs = cells[5].textContent;
+            const protein = cells[6].textContent;
+            const cookingTime = cells[8].textContent;
+
+            const nameMatch = recipeName.includes(searchValue);
+            const mealMatch = selectedMeals.length === 0 || selectedMeals.includes(meal);
+            const meatMatch = selectedMeats.length === 0 || selectedMeats.includes(meat);
+            const calorieMatch = !calorieFilter || matchesRange(calories, calorieFilter);
+            const fatMatch = !fatFilter || matchesRange(fat, fatFilter);
+            const carbMatch = !carbFilter || matchesRange(carbs, carbFilter);
+            const proteinMatch = !proteinFilter || matchesRange(protein, proteinFilter);
+            const cookingTimeMatch = !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
+
+            row.style.display = (nameMatch && mealMatch && meatMatch && 
+                                  calorieMatch && fatMatch && carbMatch && 
+                                  proteinMatch && cookingTimeMatch) ? '' : 'none';
+        });
+    }
+
+    function matchesRange(value, range) {
+        value = value.replace(/[^\d.]/g, '');
+        
+        if (value === 'N/A' || value === '') return false;
+        
+        const numValue = parseFloat(value);
+
+        switch(range) {
+            case '10g or less':
+            case '200cal or less':
+                return numValue <= 10;
+            case '11-20':
+                return numValue >= 11 && numValue <= 20;
+            case '21-30':
+                return numValue >= 21 && numValue <= 30;
+            case '31-40':
+                return numValue >= 31 && numValue <= 40;
+            case '41-50':
+                return numValue >= 41 && numValue <= 50;
+            case '50+':
+            case '600+':
+                return numValue >= 50;
+            case '201-400':
+                return numValue >= 201 && numValue <= 400;
+            case '401-600':
+                return numValue >= 401 && numValue <= 600;
+            default:
+                return true;
         }
     }
 
-    // Existing filterRecipes function (keep the previous implementation)
-    function filterRecipes() {
-        // (Keep the previous filterRecipes implementation)
-        // ... (same as in the previous script)
+    function matchesCookingTime(time, range) {
+        if (time === 'N/A' || time === '') return false;
+        
+        const numTime = parseFloat(time);
+
+        switch(range) {
+            case '0-20':
+                return numTime >= 0 && numTime <= 20;
+            case '21-30':
+                return numTime >= 21 && numTime <= 30;
+            case '31-40':
+                return numTime >= 31 && numTime <= 40;
+            case '41-50':
+                return numTime >= 41 && numTime <= 50;
+            case '51-300':
+                return numTime >= 51;
+            default:
+                return true;
+        }
     }
 
-    // Call fetch recipes
     fetchRecipes();
+
+    const filterInputs = document.querySelectorAll('input[type="checkbox"], input[type="text"], select');
+    filterInputs.forEach(input => {
+        input.addEventListener('change', filterRecipes);
+        input.addEventListener('keyup', filterRecipes);
+    });
 });
 </script>
 </body>
