@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Finder</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; }
         .filter { margin-bottom: 20px; }
@@ -158,43 +158,45 @@
 const supabase = supabase.createClient('https://smftecfffubvgnxfdhyk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o');
 
 // Fetch recipes from Supabase
-async function fetchRecipes() {
-    try {
-        const { data: recipes, error } = await supabase
-            .from('recipes')
-            .select('*');
+function fetchRecipes() {
+    supabase
+        .from('recipes')
+        .select('*')
+        .then(function(response) {
+            const { data: recipes, error } = response;
 
-        if (error) throw error;
+            if (error) throw error;
 
-        const tableBody = document.getElementById('tableBody');
-        
-        // Store the data globally for filtering
-        window.recipesData = recipes;
+            const tableBody = document.getElementById('tableBody');
+            
+            // Store the data globally for filtering
+            window.recipesData = recipes;
 
-        // Render recipes
-        recipes.forEach(recipe => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${recipe.RecipeName}</td>
-                <td>${recipe.Meal}</td>
-                <td>${recipe.Meat}</td>
-                <td>${recipe.Calories}</td>
-                <td>${recipe.Fat}</td>
-                <td>${recipe.Carbs}</td>
-                <td>${recipe.Protein}</td>
-                <td>${recipe.Method}</td>
-                <td>${recipe.CookingTime}</td>
-                <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
-            `;
-            tableBody.appendChild(row);
+            // Render recipes
+            recipes.forEach(recipe => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${recipe.RecipeName}</td>
+                    <td>${recipe.Meal}</td>
+                    <td>${recipe.Meat}</td>
+                    <td>${recipe.Calories}</td>
+                    <td>${recipe.Fat}</td>
+                    <td>${recipe.Carbs}</td>
+                    <td>${recipe.Protein}</td>
+                    <td>${recipe.Method}</td>
+                    <td>${recipe.CookingTime}</td>
+                    <td><a href="${recipe.Link}" target="_blank">View Recipe</a></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Initial filtering after load
+            filterRecipes();
+        })
+        .catch(function(error) {
+            console.error('Error loading recipes:', error);
+            alert('Failed to load recipes: ' + error.message);
         });
-
-        // Initial filtering after load
-        filterRecipes();
-    } catch (error) {
-        console.error('Error loading recipes:', error);
-        alert('Failed to load recipes: ' + error.message);
-    }
 }
 
 // Call the fetch function when the page loads
