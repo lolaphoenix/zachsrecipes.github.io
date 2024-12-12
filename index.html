@@ -183,48 +183,81 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function filterRecipes() {
-        const searchValue = document.getElementById('search').value.toLowerCase();
-        const rows = document.querySelectorAll('#recipeTable tbody tr');
+    const searchValue = document.getElementById('search').value.toLowerCase();
+    const rows = document.querySelectorAll('#recipeTable tbody tr');
 
-        const selectedMeals = Array.from(document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked'))
-            .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === 'Meal:')
-            .map(checkbox => checkbox.value);
+    // Dynamically collect selected filters for each category
+    const filterCategories = {
+        'Meal:': [],
+        'Meat:': []
+    };
 
-        const selectedMeats = Array.from(document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked'))
-            .filter(checkbox => checkbox.closest('.checkbox-group').querySelector('h4').textContent === 'Meat:')
-            .map(checkbox => checkbox.value);
+    // Collect selected checkboxes for each category
+    document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked').forEach(checkbox => {
+        const categoryTitle = checkbox.closest('.checkbox-group').querySelector('h4').textContent;
+        if (filterCategories.hasOwnProperty(categoryTitle)) {
+            filterCategories[categoryTitle].push(checkbox.value);
+        }
+    });
 
-        const calorieFilter = document.getElementById('calorieFilter').value;
-        const fatFilter = document.getElementById('fatFilter').value;
-        const carbFilter = document.getElementById('carbFilter').value;
-        const proteinFilter = document.getElementById('proteinFilter').value;
-        const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
+    const calorieFilter = document.getElementById('calorieFilter').value;
+    const fatFilter = document.getElementById('fatFilter').value;
+    const carbFilter = document.getElementById('carbFilter').value;
+    const proteinFilter = document.getElementById('proteinFilter').value;
+    const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
 
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            const recipeName = cells[0].textContent.toLowerCase();
-            const meal = cells[1].textContent;
-            const meat = cells[2].textContent;
-            const calories = cells[3].textContent;
-            const fat = cells[4].textContent;
-            const carbs = cells[5].textContent;
-            const protein = cells[6].textContent;
-            const cookingTime = cells[8].textContent;
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const recipeName = cells[0].textContent.toLowerCase();
+        const meal = cells[1].textContent;
+        const meat = cells[2].textContent;
+        const calories = cells[3].textContent;
+        const fat = cells[4].textContent;
+        const carbs = cells[5].textContent;
+        const protein = cells[6].textContent;
+        const cookingTime = cells[8].textContent;
 
-            const nameMatch = recipeName.includes(searchValue);
-            const mealMatch = selectedMeals.length === 0 || selectedMeals.includes(meal);
-            const meatMatch = selectedMeats.length === 0 || selectedMeats.includes(meat);
-            const calorieMatch = !calorieFilter || matchesRange(calories, calorieFilter);
-            const fatMatch = !fatFilter || matchesRange(fat, fatFilter);
-            const carbMatch = !carbFilter || matchesRange(carbs, carbFilter);
-            const proteinMatch = !proteinFilter || matchesRange(protein, proteinFilter);
-            const cookingTimeMatch = !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
+        const nameMatch = recipeName.includes(searchValue);
+        
+        // Updated meal and meat matching to work with multiple selections
+        const mealMatch = filterCategories['Meal:'].length === 0 || 
+            filterCategories['Meal:'].includes(meal);
+        const meatMatch = filterCategories['Meat:'].length === 0 || 
+            filterCategories['Meat:'].includes(meat);
+        
+        const calorieMatch = !calorieFilter || matchCaloriesRange(calories, calorieFilter);
+        const fatMatch = !fatFilter || matchesRange(fat, fatFilter);
+        const carbMatch = !carbFilter || matchesRange(carbs, carbFilter);
+        const proteinMatch = !proteinFilter || matchesRange(protein, proteinFilter);
+        const cookingTimeMatch = !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
 
-            row.style.display = (nameMatch && mealMatch && meatMatch && 
-                                  calorieMatch && fatMatch && carbMatch && 
-                                  proteinMatch && cookingTimeMatch) ? '' : 'none';
-        });
+        row.style.display = (nameMatch && mealMatch && meatMatch && 
+                              calorieMatch && fatMatch && carbMatch && 
+                              proteinMatch && cookingTimeMatch) ? '' : 'none';
+    });
+}
+
+// New function to handle calorie matching specifically
+function matchCaloriesRange(value, range) {
+    value = value.replace(/[^\d.]/g, '');
+    
+    if (value === 'N/A' || value === '') return false;
+    
+    const numValue = parseFloat(value);
+
+    switch(range) {
+        case '200cal or less':
+            return numValue <= 200;
+        case '201-400':
+            return numValue >= 201 && numValue <= 400;
+        case '401-600':
+            return numValue >= 401 && numValue <= 600;
+        case '600+':
+            return numValue >= 600;
+        default:
+            return true;
     }
+}
 
     function matchesRange(value, range) {
         value = value.replace(/[^\d.]/g, '');
