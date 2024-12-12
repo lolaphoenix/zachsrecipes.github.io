@@ -24,7 +24,102 @@
 
 <!-- Filter Settings and Table remain the same as in previous version -->
 <div class="filter-settings">
-    <!-- (Previous filter HTML content) -->
+ <h3>Filter by:</h3>
+
+    <div class="checkbox-group">
+        <h4>Meal:</h4>
+        <label><input type="checkbox" value="Breakfast" onchange="filterRecipes()"> Breakfast</label>
+        <label><input type="checkbox" value="Lunch" onchange="filterRecipes()"> Lunch</label>
+        <label><input type="checkbox" value="Dinner" onchange="filterRecipes()"> Dinner</label>
+        <label><input type="checkbox" value="Appetizer/Side" onchange="filterRecipes()"> Appetizer/Side</label>
+        <label><input type="checkbox" value="Dessert" onchange="filterRecipes()"> Dessert</label>
+        <label><input type="checkbox" value="Bento Box" onchange="filterRecipes()"> Bento Box</label>
+    </div>
+
+<div class="checkbox-group">
+    <h4>Meat:</h4>
+    <label><input type="checkbox" value="Beef" onchange="filterRecipes()"> Beef</label>
+    <label><input type="checkbox" value="Chicken" onchange="filterRecipes()"> Chicken</label>
+    <label><input type="checkbox" value="Pork" onchange="filterRecipes()"> Pork</label>
+    <label><input type="checkbox" value="Turkey" onchange="filterRecipes()"> Turkey</label>
+    <label><input type="checkbox" value="Sausage" onchange="filterRecipes()"> Sausage</label>
+    <label><input type="checkbox" value="Bacon" onchange="filterRecipes()"> Bacon</label>
+    <label><input type="checkbox" value="Spam" onchange="filterRecipes()"> Spam</label>
+    <label><input type="checkbox" value="Shrimp" onchange="filterRecipes()"> Shrimp</label>
+    <label><input type="checkbox" value="Tuna" onchange="filterRecipes()"> Tuna</label>
+    <label><input type="checkbox" value="Salami" onchange="filterRecipes()"> Salami</label>
+    <label><input type="checkbox" value="Fish" onchange="filterRecipes()"> Fish</label>
+    <label><input type="checkbox" value="Salmon" onchange="filterRecipes()"> Salmon</label>
+    <label><input type="checkbox" value="None" onchange="filterRecipes()"> None</label>
+</div>
+
+
+    <!-- Calories Filter as Dropdown -->
+    <div class="checkbox-group">
+        <h4>Calories:</h4>
+        <select id="calorieFilter" onchange="filterRecipes()">
+            <option value="">Select Calorie Range</option>
+            <option value="200cal or less">200cal or less</option>
+            <option value="201-400">201-400</option>
+            <option value="401-600">401-600</option>
+            <option value="600+">600+</option>
+        </select>
+    </div>
+
+    <!-- Fat Filter as Dropdown -->
+    <div class="checkbox-group">
+        <h4>Fat:</h4>
+        <select id="fatFilter" onchange="filterRecipes()">
+            <option value="">Select Fat Range</option>
+            <option value="10g or less">10g or less</option>
+            <option value="11-20">11-20</option>
+            <option value="21-30">21-30</option>
+            <option value="31-40">31-40</option>
+            <option value="41-50">41-50</option>
+            <option value="50+">50+</option>
+        </select>
+    </div>
+
+    <!-- Carbs Filter as Dropdown -->
+    <div class='checkbox-group'>
+        <h4>Carbs:</h4>
+        <select id='carbFilter' onchange='filterRecipes()'>
+            <option value=''>Select Carb Range</option>
+            <option value='10g or less'>10g or less</option>
+            <option value='11-20'>11-20</option>
+            <option value='21-30'>21-30</option>
+            <option value='31-40'>31-40</option>
+            <option value='41-50'>41-50</option>
+            <option value='50+'>50+</option>
+        </select>
+    </div>
+
+    <!-- Protein Filter as Dropdown -->
+    <div class='checkbox-group'>
+        <h4>Protein:</h4>
+        <select id='proteinFilter' onchange='filterRecipes()'>
+            <option value=''>Select Protein Range</option>
+            <option value='10g or less'>10g or less</option>
+            <option value='11-20'>11-20</option>
+            <option value='21-30'>21-30</option>
+            <option value='31-40'>31-40</option>
+            <option value='41-50'>41-50</option>
+            <option value='50+'>50+</option>
+        </select>
+    </div>
+
+    <!-- Cooking Time Filter as Dropdown -->
+    <div class='checkbox-group'>
+    <h4>Cooking Time in Minutes:</h4>
+    <select id="cookingTimeFilter" onchange="filterRecipes()">
+        <option value="">Select Cooking Time Range</option>
+        <option value="0-20">0-20</option>
+        <option value="21-30">21-30</option>
+        <option value="31-40">31-40</option>
+        <option value="41-50">41-50</option>
+        <option value="51-300">51+</option>
+    </select>
+
 </div>
 
 <table id="recipeTable">
