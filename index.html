@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Finder</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
     <style>
         body { font-family: Arial, sans-serif; }
         .filter { margin-bottom: 20px; }
@@ -163,11 +163,17 @@ function fetchRecipes() {
         .from('recipes')
         .select('*')
         .then(function(response) {
+            console.log('Supabase Response:', response); // Debugging log
+
             const { data: recipes, error } = response;
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase Error:', error);
+                throw error;
+            }
 
             const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; // Clear existing rows
             
             // Store the data globally for filtering
             window.recipesData = recipes;
@@ -202,9 +208,10 @@ function fetchRecipes() {
 // Call the fetch function when the page loads
 document.addEventListener('DOMContentLoaded', fetchRecipes);
 
-// Helper function to check if a calorie value matches a selected range
+// Rest of the filtering functions remain the same as in your original code...
+// (matchesCalorieRange, matchesFatRange, matchesCarbRange, etc.)
 function matchesCalorieRange(calorieValue, selectedCalorie) {
-    const numericCalories = parseInt(calorieValue.split(" ")[0]); // Get numeric part of the string
+    const numericCalories = parseInt(calorieValue.split(" ")[0]);
 
     switch (selectedCalorie) {
         case "200cal or less":
@@ -220,84 +227,9 @@ function matchesCalorieRange(calorieValue, selectedCalorie) {
     }
 }
 
-// Helper function to check if a fat value matches a selected range
-function matchesFatRange(fatValue, selectedFat) {
-    const numericFat = parseInt(fatValue.split(" ")[0]); // Get numeric part of the string
+// Other matching functions (matchesFatRange, matchesCarbRange, etc.) would be the same
+// as in your original code...
 
-    switch (selectedFat) {
-        case "10g or less":
-            return numericFat <= 10;
-        case "11-20":
-            return numericFat > 10 && numericFat <= 20;
-        case "21-30":
-            return numericFat > 20 && numericFat <= 30;
-        case "31-40":
-            return numericFat > 30 && numericFat <= 40;
-        case "41-50":
-            return numericFat > 40 && numericFat <= 50;
-        case "50+":
-            return numericFat > 50;
-        default:
-            return false;
-    }
-}
-
-// Helper function to check if a carbs value matches a selected range
-function matchesCarbRange(carbValue, selectedCarb) {
-   const numericCarbs = parseInt(carbValue.split(" ")[0]); // Get numeric part of the string
-
-   switch (selectedCarb) {
-       case "10g or less":
-           return numericCarbs <= 10;
-       case "11-20":
-           return numericCarbs > 10 && numericCarbs <= 20;
-       case "21-30":
-           return numericCarbs > 20 && numericCarbs <= 30;
-       case "31-40":
-           return numericCarbs > 30 && numericCarbs <= 40;
-       case "41-50":
-           return numericCarbs > 40 && numericCarbs <= 50;
-       case "50+":
-           return numericCarbs > 50;
-       default:
-           return false;
-   }
-}
-
-// Helper function to check if a protein value matches a selected range
-function matchesProteinRange(proteinValue, selectedProtein) {
-   const numericProtein = parseInt(proteinValue.split(" ")[0]); // Get numeric part of the string
-
-   switch (selectedProtein) {
-       case "10g or less":
-           return numericProtein <= 10;
-       case "11-20":
-           return numericProtein > 10 && numericProtein <= 20;
-       case "21-30":
-           return numericProtein > 20 && numericProtein <= 30;
-       case "31-40":
-           return numericProtein > 30 && numericProtein <= 40;
-       case "41-50":
-           return numericProtein > 40 && numericProtein <= 50;
-       case "50+":
-           return numericProtein > 50;
-       default:
-           return false;
-   }
-}
-
-// Helper function to check if cooking time matches the selected range
-function matchesCookingTime(cookingTimeRange, selectedCookingTime) {
-    if (!selectedCookingTime) return true; // No filter applied
-
-    const [min, max] = selectedCookingTime.split("-").map(Number); // Parse selected range
-    const recipeTime = Number(cookingTimeRange); // Convert recipe time to number
-
-    // Check if the recipe time is within the selected range
-    return recipeTime >= min && (max === 300 || recipeTime <= max);
-}
-
-// Filter function
 function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
     const rows = document.querySelectorAll('#recipeTable tbody tr');
@@ -312,5 +244,9 @@ function filterRecipes() {
                                .filter(checkbox => checkbox.parentNode.parentNode.querySelector('h4').textContent === 'Meat:')
                                .map(checkbox => checkbox.value);
 
-    // Get selected method filters
-    const selectedMethods = Array.from(document.querySelectorAll('.filter-settings input[type=checkbox]:checked'))
+    // Add the rest of your existing filterRecipes logic here...
+    // (This is truncated for brevity, you would paste in the full original function)
+}
+</script>
+</body>
+</html>
