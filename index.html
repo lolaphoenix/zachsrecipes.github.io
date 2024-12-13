@@ -182,106 +182,131 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-function filterRecipes() {
-    const searchValue = document.getElementById('search').value.toLowerCase();
-    const rows = document.querySelectorAll('#recipeTable tbody tr');
-
-    // Dynamically collect selected filters for each category
-    const filterCategories = {
-        'Meal:': [],
-        'Meat:': [],
-        'Method:': []
-    };
-
-    // Collect selected checkboxes for each category
-    document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked').forEach(checkbox => {
-        const categoryTitle = checkbox.closest('.checkbox-group').querySelector('h4').textContent;
-        if (filterCategories.hasOwnProperty(categoryTitle)) {
-            filterCategories[categoryTitle].push(checkbox.value);
-        }
-    });
-
-    const calorieFilter = document.getElementById('calorieFilter').value;
-    const fatFilter = document.getElementById('fatFilter').value;
-    const carbFilter = document.getElementById('carbFilter').value;
-    const proteinFilter = document.getElementById('proteinFilter').value;
-    const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
-
-    // Check if any filter is actually applied
-    const hasActiveFilters = 
-        searchValue !== '' ||
-        Object.values(filterCategories).some(category => category.length > 0) ||
-        calorieFilter !== '' ||
-        fatFilter !== '' ||
-        carbFilter !== '' ||
-        proteinFilter !== '' ||
-        cookingTimeFilter !== '';
-
-    let visibleRowCount = 0;
-
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const recipeName = cells[0].textContent.toLowerCase();
-        const meal = cells[1].textContent;
-        const meat = cells[2].textContent;
-        const calories = cells[3].textContent;
-        const fat = cells[4].textContent;
-        const carbs = cells[5].textContent;
-        const protein = cells[6].textContent;
-        const method = cells[7].textContent;
-        const cookingTime = cells[8].textContent;
-
-        const nameMatch = recipeName.includes(searchValue);
+    function matchCaloriesRange(calories, filterValue) {
+        // Remove 'cal' and convert to number, handling 'or less' cases
+        calories = calories.replace('cal', '').trim();
         
-        // Only apply filter matching if there are active filters
-        const mealMatch = !hasActiveFilters || 
-            filterCategories['Meal:'].length === 0 || 
-            filterCategories['Meal:'].some(selectedMeal => 
-                meal.split(',').map(m => m.trim()).includes(selectedMeal)
-            );
-        
-        const meatMatch = !hasActiveFilters || 
-            filterCategories['Meat:'].length === 0 || 
-            filterCategories['Meat:'].some(selectedMeat => 
-                meat.split(',').map(m => m.trim()).includes(selectedMeat)
-            );
-
-        const calorieMatch = !hasActiveFilters || !calorieFilter || matchCaloriesRange(calories, calorieFilter);
-        const fatMatch = !hasActiveFilters || !fatFilter || matchesRange(fat, fatFilter);
-        const carbMatch = !hasActiveFilters || !carbFilter || matchesRange(carbs, carbFilter);
-        const proteinMatch = !hasActiveFilters || !proteinFilter || matchesRange(protein, proteinFilter);
-        const cookingTimeMatch = !hasActiveFilters || !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
-
-        const methodMatch = !hasActiveFilters || 
-            filterCategories['Method:'].length === 0 || 
-            filterCategories['Method:'].some(selectedMethod => 
-                method.split(',').map(m => m.trim()).includes(selectedMethod)
-            );
-
-        const isVisible = nameMatch && mealMatch && meatMatch && 
-                          calorieMatch && fatMatch && carbMatch && 
-                          proteinMatch && cookingTimeMatch && methodMatch;
-
-        row.style.display = isVisible ? '' : 'none';
-
-        // Count visible rows
-        if (isVisible) {
-            visibleRowCount++;
+        if (filterValue === '200cal or less') {
+            return parseFloat(calories) <= 200;
+        } else if (filterValue === '201-400') {
+            return parseFloat(calories) >= 201 && parseFloat(calories) <= 400;
+        } else if (filterValue === '401-600') {
+            return parseFloat(calories) >= 401 && parseFloat(calories) <= 600;
+        } else if (filterValue === '600+') {
+            return parseFloat(calories) > 600;
         }
-    });
+        return true;
+    }
 
-    // Optional: Log the number of visible recipes
-    console.log(`Visible Recipes: ${visibleRowCount}`);
-}
+    function matchesRange(value, filterValue) {
+        // Remove 'g' and convert to number, handling 'or less' and other range cases
+        value = value.replace('g', '').trim();
+        
+        if (filterValue === '10g or less') {
+            return parseFloat(value) <= 10;
+        } else if (filterValue === '11-20') {
+            return parseFloat(value) >= 11 && parseFloat(value) <= 20;
+        } else if (filterValue === '21-30') {
+            return parseFloat(value) >= 21 && parseFloat(value) <= 30;
+        } else if (filterValue === '31-40') {
+            return parseFloat(value) >= 31 && parseFloat(value) <= 40;
+        } else if (filterValue === '41-50') {
+            return parseFloat(value) >= 41 && parseFloat(value) <= 50;
+        } else if (filterValue === '50+') {
+            return parseFloat(value) > 50;
+        }
+        return true;
+    }
 
-    fetchRecipes();
+    function matchesCookingTime(time, filterValue) {
+        // Convert time to number
+        time = parseFloat(time);
+        
+        if (filterValue === '0-20') {
+            return time >= 0 && time <= 20;
+        } else if (filterValue === '21-30') {
+            return time >= 21 && time <= 30;
+        } else if (filterValue === '31-40') {
+            return time >= 31 && time <= 40;
+        } else if (filterValue === '41-50') {
+            return time >= 41 && time <= 50;
+        } else if (filterValue === '51-300') {
+            return time >= 51;
+        }
+        return true;
+    }
 
-    const filterInputs = document.querySelectorAll('input[type="checkbox"], input[type="text"], select');
-    filterInputs.forEach(input => {
-        input.addEventListener('change', filterRecipes);
-        input.addEventListener('keyup', filterRecipes);
-    });
-});
-</script>
-</body>
-</html>
+    function filterRecipes() {
+        const searchValue = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('#recipeTable tbody tr');
+
+        // Dynamically collect selected filters for each category
+        const filterCategories = {
+            'Meal:': [],
+            'Meat:': [],
+            'Method:': []
+        };
+
+        // Collect selected checkboxes for each category
+        document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked').forEach(checkbox => {
+            const categoryTitle = checkbox.closest('.checkbox-group').querySelector('h4').textContent;
+            if (filterCategories.hasOwnProperty(categoryTitle)) {
+                filterCategories[categoryTitle].push(checkbox.value);
+            }
+        });
+
+        const calorieFilter = document.getElementById('calorieFilter').value;
+        const fatFilter = document.getElementById('fatFilter').value;
+        const carbFilter = document.getElementById('carbFilter').value;
+        const proteinFilter = document.getElementById('proteinFilter').value;
+        const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
+
+        // Check if any filter is actually applied
+        const hasActiveFilters = 
+            searchValue !== '' ||
+            Object.values(filterCategories).some(category => category.length > 0) ||
+            calorieFilter !== '' ||
+            fatFilter !== '' ||
+            carbFilter !== '' ||
+            proteinFilter !== '' ||
+            cookingTimeFilter !== '';
+
+        let visibleRowCount = 0;
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const recipeName = cells[0].textContent.toLowerCase();
+            const meal = cells[1].textContent;
+            const meat = cells[2].textContent;
+            const calories = cells[3].textContent;
+            const fat = cells[4].textContent;
+            const carbs = cells[5].textContent;
+            const protein = cells[6].textContent;
+            const method = cells[7].textContent;
+            const cookingTime = cells[8].textContent;
+
+            const nameMatch = recipeName.includes(searchValue);
+            
+            // Only apply filter matching if there are active filters
+            const mealMatch = !hasActiveFilters || 
+                filterCategories['Meal:'].length === 0 || 
+                filterCategories['Meal:'].some(selectedMeal => 
+                    meal.split(',').map(m => m.trim()).includes(selectedMeal)
+                );
+            
+            const meatMatch = !hasActiveFilters || 
+                filterCategories['Meat:'].length === 0 || 
+                filterCategories['Meat:'].some(selectedMeat => 
+                    meat.split(',').map(m => m.trim()).includes(selectedMeat)
+                );
+
+            const calorieMatch = !hasActiveFilters || !calorieFilter || matchCaloriesRange(calories, calorieFilter);
+            const fatMatch = !hasActiveFilters || !fatFilter || matchesRange(fat, fatFilter);
+            const carbMatch = !hasActiveFilters || !carbFilter || matchesRange(carbs, carbFilter);
+            const proteinMatch = !hasActiveFilters || !proteinFilter || matchesRange(protein, proteinFilter);
+            const cookingTimeMatch = !hasActiveFilters || !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
+
+            const methodMatch = !hasActiveFilters || 
+                filterCategories['Method:'].length === 0 || 
+                filterCategories['Method:'].some(selectedMethod => 
+                    method.split(',').map(m => m.trim()).includes(
