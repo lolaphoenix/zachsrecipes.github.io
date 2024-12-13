@@ -182,14 +182,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    function filterRecipes() {
+function filterRecipes() {
     const searchValue = document.getElementById('search').value.toLowerCase();
     const rows = document.querySelectorAll('#recipeTable tbody tr');
 
     // Dynamically collect selected filters for each category
     const filterCategories = {
         'Meal:': [],
-        'Meat:': []
+        'Meat:': [],
+        'Method:': []
     };
 
     // Collect selected checkboxes for each category
@@ -206,6 +207,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const proteinFilter = document.getElementById('proteinFilter').value;
     const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
 
+    // Debugging: Log current filter state
+    console.log('Current Filters:', {
+        search: searchValue,
+        mealFilters: filterCategories['Meal:'],
+        meatFilters: filterCategories['Meat:'],
+        calorieFilter,
+        fatFilter,
+        carbFilter,
+        proteinFilter,
+        cookingTimeFilter
+    });
+
+    let visibleRowCount = 0;
+
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         const recipeName = cells[0].textContent.toLowerCase();
@@ -215,32 +230,54 @@ document.addEventListener('DOMContentLoaded', function() {
         const fat = cells[4].textContent;
         const carbs = cells[5].textContent;
         const protein = cells[6].textContent;
+        const method = cells[7].textContent;
         const cookingTime = cells[8].textContent;
 
         const nameMatch = recipeName.includes(searchValue);
         
-        // Updated meal and meat matching to work with multiple selections
+        // Improved multi-selection matching for meal, meat, and method
         const mealMatch = filterCategories['Meal:'].length === 0 || 
-            filterCategories['Meal:'].includes(meal);
-        const meatMatch = filterCategories['Meat:'].length === 0 || 
-            filterCategories['Meat:'].includes(meat);
+            filterCategories['Meal:'].some(selectedMeal => 
+                meal.split(',').map(m => m.trim()).includes(selectedMeal)
+            );
         
+        const meatMatch = filterCategories['Meat:'].length === 0 || 
+            filterCategories['Meat:'].some(selectedMeat => 
+                meat.split(',').map(m => m.trim()).includes(selectedMeat)
+            );
+
         const calorieMatch = !calorieFilter || matchCaloriesRange(calories, calorieFilter);
         const fatMatch = !fatFilter || matchesRange(fat, fatFilter);
         const carbMatch = !carbFilter || matchesRange(carbs, carbFilter);
         const proteinMatch = !proteinFilter || matchesRange(protein, proteinFilter);
         const cookingTimeMatch = !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
 
-        row.style.display = (nameMatch && mealMatch && meatMatch && 
-                              calorieMatch && fatMatch && carbMatch && 
-                              proteinMatch && cookingTimeMatch) ? '' : 'none';
+        const methodMatch = filterCategories['Method:'].length === 0 || 
+            filterCategories['Method:'].some(selectedMethod => 
+                method.split(',').map(m => m.trim()).includes(selectedMethod)
+            );
+
+        const isVisible = nameMatch && mealMatch && meatMatch && 
+                          calorieMatch && fatMatch && carbMatch && 
+                          proteinMatch && cookingTimeMatch && methodMatch;
+
+        row.style.display = isVisible ? '' : 'none';
+
+        // Count visible rows
+        if (isVisible) {
+            visibleRowCount++;
+        }
     });
+
+    // Debugging: Log number of visible rows
+    console.log(`Visible Recipes: ${visibleRowCount}`);
 }
 
-// New function to handle calorie matching specifically
 function matchCaloriesRange(value, range) {
+    // Clean the value, removing any non-numeric characters
     value = value.replace(/[^\d.]/g, '');
     
+    // Handle 'N/A' or empty values
     if (value === 'N/A' || value === '') return false;
     
     const numValue = parseFloat(value);
@@ -259,58 +296,32 @@ function matchCaloriesRange(value, range) {
     }
 }
 
-    function matchesRange(value, range) {
-        value = value.replace(/[^\d.]/g, '');
-        
-        if (value === 'N/A' || value === '') return false;
-        
-        const numValue = parseFloat(value);
+function matchesRange(value, range) {
+    // Clean the value, removing any non-numeric characters
+    value = value.replace(/[^\d.]/g, '');
+    
+    // Handle 'N/A' or empty values
+    if (value === 'N/A' || value === '') return false;
+    
+    const numValue = parseFloat(value);
 
-        switch(range) {
-            case '10g or less':
-            case '200cal or less':
-                return numValue <= 10;
-            case '11-20':
-                return numValue >= 11 && numValue <= 20;
-            case '21-30':
-                return numValue >= 21 && numValue <= 30;
-            case '31-40':
-                return numValue >= 31 && numValue <= 40;
-            case '41-50':
-                return numValue >= 41 && numValue <= 50;
-            case '50+':
-            case '600+':
-                return numValue >= 50;
-            case '201-400':
-                return numValue >= 201 && numValue <= 400;
-            case '401-600':
-                return numValue >= 401 && numValue <= 600;
-            default:
-                return true;
-        }
+    switch(range) {
+        case '10g or less':
+            return numValue <= 10;
+        case '11-20':
+            return numValue >= 11 && numValue <= 20;
+        case '21-30':
+            return numValue >= 21 && numValue <= 30;
+        case '31-40':
+            return numValue >= 31 && numValue <= 40;
+        case '41-50':
+            return numValue >= 41 && numValue <= 50;
+        case '50+':
+            return numValue >= 50;
+        default:
+            return true;
     }
-
-    function matchesCookingTime(time, range) {
-        if (time === 'N/A' || time === '') return false;
-        
-        const numTime = parseFloat(time);
-
-        switch(range) {
-            case '0-20':
-                return numTime >= 0 && numTime <= 20;
-            case '21-30':
-                return numTime >= 21 && numTime <= 30;
-            case '31-40':
-                return numTime >= 31 && numTime <= 40;
-            case '41-50':
-                return numTime >= 41 && numTime <= 50;
-            case '51-300':
-                return numTime >= 51;
-            default:
-                return true;
-        }
-    }
-
+}
     fetchRecipes();
 
     const filterInputs = document.querySelectorAll('input[type="checkbox"], input[type="text"], select');
