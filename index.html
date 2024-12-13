@@ -137,151 +137,98 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const supabaseClient = supabase.createClient(
-        'https://smftecfffubvgnxfdhyk.supabase.co', 
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o'
-    );
+    let recipes = [];
+    const tableBody = document.querySelector('#recipeTable tbody');
+    const searchInput = document.getElementById('searchInput');
+    const mealFilter = document.getElementById('mealFilter');
+    const meatFilter = document.getElementById('meatFilter');
+    const calorieFilter = document.getElementById('calorieFilter');
+    const fatFilter = document.getElementById('fatFilter');
+    const carbFilter = document.getElementById('carbFilter');
+    const proteinFilter = document.getElementById('proteinFilter');
+    const timeFilter = document.getElementById('timeFilter');
 
-    function fetchRecipes() {
-        supabaseClient
-            .from('recipes')
-            .select('*')
-            .then(function(response) {
-                const { data: recipes, error } = response;
-
-                if (error) {
-                    console.error('Supabase Error:', error);
-                    throw error;
-                }
-
-                const tableBody = document.getElementById('tableBody');
-                tableBody.innerHTML = '';
-                
-                recipes.forEach(recipe => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${recipe.RecipeName || 'N/A'}</td>
-                        <td>${recipe.Meal || 'N/A'}</td>
-                        <td>${recipe.Meat || 'N/A'}</td>
-                        <td>${recipe.Calories || 'N/A'}</td>
-                        <td>${recipe.Fat || 'N/A'}</td>
-                        <td>${recipe.Carbs || 'N/A'}</td>
-                        <td>${recipe.Protein || 'N/A'}</td>
-                        <td>${recipe.Method || 'N/A'}</td>
-                        <td>${recipe.CookingTime || 'N/A'}</td>
-                        <td><a href="${recipe.Link || '#'}" target="_blank">View Recipe</a></td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-                filterRecipes();
-            })
-            .catch(function(error) {
-                console.error('Comprehensive Error:', error);
-                alert('Failed to load recipes: ' + error.message);
-            });
-    }
-
-function filterRecipes() {
-    const searchValue = document.getElementById('search').value.toLowerCase();
-    const rows = document.querySelectorAll('#recipeTable tbody tr');
-
-    // Dynamically collect selected filters for each category
-    const filterCategories = {
-        'Meal:': [],
-        'Meat:': [],
-        'Method:': []
-    };
-
-    // Collect selected checkboxes for each category
-    document.querySelectorAll('.filter-settings input[type="checkbox"][value]:checked').forEach(checkbox => {
-        const categoryTitle = checkbox.closest('.checkbox-group').querySelector('h4').textContent;
-        if (filterCategories.hasOwnProperty(categoryTitle)) {
-            filterCategories[categoryTitle].push(checkbox.value);
-        }
-    });
-
-    const calorieFilter = document.getElementById('calorieFilter').value;
-    const fatFilter = document.getElementById('fatFilter').value;
-    const carbFilter = document.getElementById('carbFilter').value;
-    const proteinFilter = document.getElementById('proteinFilter').value;
-    const cookingTimeFilter = document.getElementById('cookingTimeFilter').value;
-
-    // Check if any filter is actually applied
-    const hasActiveFilters = 
-        searchValue !== '' ||
-        Object.values(filterCategories).some(category => category.length > 0) ||
-        calorieFilter !== '' ||
-        fatFilter !== '' ||
-        carbFilter !== '' ||
-        proteinFilter !== '' ||
-        cookingTimeFilter !== '';
-
-    let visibleRowCount = 0;
-
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const recipeName = cells[0].textContent.toLowerCase();
-        const meal = cells[1].textContent;
-        const meat = cells[2].textContent;
-        const calories = cells[3].textContent;
-        const fat = cells[4].textContent;
-        const carbs = cells[5].textContent;
-        const protein = cells[6].textContent;
-        const method = cells[7].textContent;
-        const cookingTime = cells[8].textContent;
-
-        const nameMatch = recipeName.includes(searchValue);
-        
-        // Only apply filter matching if there are active filters
-        const mealMatch = !hasActiveFilters || 
-            filterCategories['Meal:'].length === 0 || 
-            filterCategories['Meal:'].some(selectedMeal => 
-                meal.split(',').map(m => m.trim()).includes(selectedMeal)
-            );
-        
-        const meatMatch = !hasActiveFilters || 
-            filterCategories['Meat:'].length === 0 || 
-            filterCategories['Meat:'].some(selectedMeat => 
-                meat.split(',').map(m => m.trim()).includes(selectedMeat)
-            );
-
-        const calorieMatch = !hasActiveFilters || !calorieFilter || matchCaloriesRange(calories, calorieFilter);
-        const fatMatch = !hasActiveFilters || !fatFilter || matchesRange(fat, fatFilter);
-        const carbMatch = !hasActiveFilters || !carbFilter || matchesRange(carbs, carbFilter);
-        const proteinMatch = !hasActiveFilters || !proteinFilter || matchesRange(protein, proteinFilter);
-        const cookingTimeMatch = !hasActiveFilters || !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
-
-        const methodMatch = !hasActiveFilters || 
-            filterCategories['Method:'].length === 0 || 
-            filterCategories['Method:'].some(selectedMethod => 
-                method.split(',').map(m => m.trim()).includes(selectedMethod)
-            );
-
-        const isVisible = nameMatch && mealMatch && meatMatch && 
-                          calorieMatch && fatMatch && carbMatch && 
-                          proteinMatch && cookingTimeMatch && methodMatch;
-
-        row.style.display = isVisible ? '' : 'none';
-
-        // Count visible rows
-        if (isVisible) {
-            visibleRowCount++;
-        }
-    });
-
-    // Optional: Log the number of visible recipes
-    console.log(`Visible Recipes: ${visibleRowCount}`);
-}
-
+    // Fetch recipes from Supabase
     fetchRecipes();
 
-    const filterInputs = document.querySelectorAll('input[type="checkbox"], input[type="text"], select');
-    filterInputs.forEach(input => {
-        input.addEventListener('change', filterRecipes);
-        input.addEventListener('keyup', filterRecipes);
-    });
+    // Add event listeners to filters
+    searchInput.addEventListener('input', filterRecipes);
+    mealFilter.addEventListener('change', filterRecipes);
+    meatFilter.addEventListener('change', filterRecipes);
+    calorieFilter.addEventListener('change', filterRecipes);
+    fatFilter.addEventListener('change', filterRecipes);
+    carbFilter.addEventListener('change', filterRecipes);
+    proteinFilter.addEventListener('change', filterRecipes);
+    timeFilter.addEventListener('change', filterRecipes);
+
+    function fetchRecipes() {
+        // Replace with your Supabase fetch logic
+        // For now, we'll use a placeholder
+        recipes = [
+            // Add your recipe objects here
+        ];
+        displayRecipes(recipes);
+    }
+
+    function displayRecipes(recipesToShow) {
+        tableBody.innerHTML = '';
+        recipesToShow.forEach(recipe => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${recipe.name}</td>
+                <td>${recipe.meal}</td>
+                <td>${recipe.meat}</td>
+                <td>${recipe.calories}</td>
+                <td>${recipe.fat}</td>
+                <td>${recipe.carbs}</td>
+                <td>${recipe.protein}</td>
+                <td>${recipe.method}</td>
+                <td>${recipe.minutes}</td>
+                <td><a href="${recipe.link}" target="_blank">View</a></td>
+            `;
+        });
+    }
+
+    function filterRecipes() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedMeals = Array.from(mealFilter.selectedOptions).map(option => option.value);
+        const selectedMeats = Array.from(meatFilter.selectedOptions).map(option => option.value);
+        const selectedCalories = calorieFilter.value;
+        const selectedFat = fatFilter.value;
+        const selectedCarbs = carbFilter.value;
+        const selectedProtein = proteinFilter.value;
+        const selectedTime = timeFilter.value;
+
+        const filteredRecipes = recipes.filter(recipe => {
+            const matchesSearch = recipe.name.toLowerCase().includes(searchTerm);
+            const matchesMeal = selectedMeals.length === 0 || selectedMeals.some(meal => recipe.meal.includes(meal));
+            const matchesMeat = selectedMeats.length === 0 || selectedMeats.some(meat => recipe.meat.includes(meat));
+            const matchesCalories = !selectedCalories || checkRange(recipe.calories, selectedCalories);
+            const matchesFat = !selectedFat || checkRange(recipe.fat, selectedFat);
+            const matchesCarbs = !selectedCarbs || checkRange(recipe.carbs, selectedCarbs);
+            const matchesProtein = !selectedProtein || checkRange(recipe.protein, selectedProtein);
+            const matchesTime = !selectedTime || checkTimeRange(recipe.minutes, selectedTime);
+
+            return matchesSearch && matchesMeal && matchesMeat && matchesCalories && matchesFat && matchesCarbs && matchesProtein && matchesTime;
+        });
+
+        displayRecipes(filteredRecipes);
+    }
+
+    function checkRange(value, range) {
+        const [min, max] = range.split('-').map(Number);
+        if (isNaN(min)) return value <= max;
+        if (isNaN(max)) return value >= min;
+        return value >= min && value <= max;
+    }
+
+    function checkTimeRange(minutes, range) {
+        const [min, max] = range.split('-').map(Number);
+        if (range === '51+') return minutes >= 51;
+        return minutes >= min && minutes <= max;
+    }
 });
 </script>
+
 </body>
 </html>
