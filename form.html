@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Input Form</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         form { max-width: 600px; margin: 0 auto; }
@@ -87,60 +88,46 @@
 </form>
 
 <script>
-    function addRecipe() {
+// Initialize Supabase client
+const supabaseClient = supabase.createClient(
+    'https://smftecfffubvgnxfdhyk.supabase.co', 
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o'
+);
+
+async function addRecipe() {
     const form = document.getElementById('recipeForm');
     const formData = new FormData(form);
     const newRecipe = {};
 
-    // Process form data into a JSON object
+    // Collect form data
     formData.forEach((value, key) => {
         newRecipe[key] = value;
     });
 
-    // Avoid UI blocking by deferring logging
-    setTimeout(() => {
-        console.log(JSON.stringify(newRecipe, null, 2));
-    }, 0);
+    try {
+        // Insert the new recipe into Supabase
+        const { data, error } = await supabaseClient
+            .from('recipes')
+            .insert([newRecipe]);
 
-    alert('Recipe JSON generated. Check the console for the result.');
-}
-
-</script>
-<script>
-    async function addRecipe() {
-        const form = document.getElementById('recipeForm');
-        const formData = new FormData(form);
-        const newRecipe = {};
-
-        // Collect form data
-        formData.forEach((value, key) => {
-            newRecipe[key] = value;
-        });
-
-        try {
-            // Send the data to the serverless function
-            const response = await fetch('/api/addRecipe', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newRecipe),  // Send the data as JSON
-            });
-
-            // Parse the response from the server
-            const data = await response.json();
-
-            // Check if the response is successful
-            if (response.ok) {
-                alert('Recipe added successfully!');
-            } else {
-                alert(`Failed to add recipe: ${data.error || 'Unknown error'}`);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while submitting the form.');
+        // Check for errors
+        if (error) {
+            console.error('Error adding recipe:', error);
+            alert(`Failed to add recipe: ${error.message}`);
+            return;
         }
+
+        // Success message
+        alert('Recipe added successfully!');
+        
+        // Optional: Reset form after successful submission
+        form.reset();
+
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        alert('An unexpected error occurred while adding the recipe.');
     }
+}
 </script>
 
 </body>
