@@ -139,6 +139,12 @@
 // Function to match calories range
 function matchCaloriesRange(value, filter) {
     if (!value || value === 'N/A') return false;
+    
+    // Special handling for "600+" case
+    if (value === '600+') {
+        return filter === '600+';
+    }
+
     const calories = parseInt(value.replace('cal', ''));
 
     switch(filter) {
@@ -158,6 +164,12 @@ function matchCaloriesRange(value, filter) {
 // Function to match numeric ranges
 function matchesRange(value, filter) {
     if (!value || value === 'N/A') return false;
+    
+    // Special handling for "50+" case
+    if (value === '50+') {
+        return filter === '50+';
+    }
+
     const numericValue = parseFloat(value);
 
     switch(filter) {
@@ -172,7 +184,7 @@ function matchesRange(value, filter) {
         case '41-50':
             return numericValue >= 41 && numericValue <= 50;
         case '50+':
-            return numericValue > 50;
+            return numericValue >= 50;
         default:
             return true;
     }
