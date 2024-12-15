@@ -195,9 +195,73 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function matchCaloriesRange(calories, filter) {
+        if (!calories || calories === 'N/A') return false;
+        
+        const calorieValue = parseFloat(calories);
+        
+        switch(filter) {
+            case '200cal or less':
+                return calorieValue <= 200;
+            case '201-400':
+                return calorieValue > 200 && calorieValue <= 400;
+            case '401-600':
+                return calorieValue > 400 && calorieValue <= 600;
+            case '600+':
+                return calorieValue > 600;
+            default:
+                return true;
+        }
+    }
+
+    function matchesRange(value, filter) {
+        if (!value || value === 'N/A') return false;
+        
+        const numValue = parseFloat(value.replace('g', ''));
+        
+        switch(filter) {
+            case '10g or less':
+                return numValue <= 10;
+            case '11-20':
+                return numValue > 10 && numValue <= 20;
+            case '21-30':
+                return numValue > 20 && numValue <= 30;
+            case '31-40':
+                return numValue > 30 && numValue <= 40;
+            case '41-50':
+                return numValue > 40 && numValue <= 50;
+            case '50+':
+                return numValue > 50;
+            default:
+                return true;
+        }
+    }
+
+    function matchesCookingTime(time, filter) {
+        if (!time || time === 'N/A') return false;
+        
+        const timeValue = parseFloat(time);
+        
+        switch(filter) {
+            case '0-20':
+                return timeValue >= 0 && timeValue <= 20;
+            case '21-30':
+                return timeValue >= 21 && timeValue <= 30;
+            case '31-40':
+                return timeValue >= 31 && timeValue <= 40;
+            case '41-50':
+                return timeValue >= 41 && timeValue <= 50;
+            case '51+':
+                return timeValue >= 51;
+            default:
+                return true;
+        }
+    }
+
     function filterRecipes() {
         const searchValue = document.getElementById('search').value.toLowerCase();
         const rows = document.querySelectorAll('#recipeTable tbody tr');
+        const tableBody = document.getElementById('tableBody');
 
         // Dynamically collect selected filters for each category
         const filterCategories = {
@@ -283,12 +347,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Add or remove "No recipes found" row
+        const noResultsRow = document.getElementById('no-results-row');
+        if (visibleRowCount === 0) {
+            if (!noResultsRow) {
+                const noResultsRow = document.createElement('tr');
+                noResultsRow.id = 'no-results-row';
+                noResultsRow.innerHTML = `
+                    <td colspan="10" style="text-align: center; padding: 20px; font-style: italic;">
+                        No recipes match your current filters. Try adjusting your search or filters.
+                    </td>
+                `;
+                tableBody.appendChild(noResultsRow);
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+
         // Optional: Log the number of visible recipes
         console.log(`Visible Recipes: ${visibleRowCount}`);
     }
-
-    // Existing helper functions for range matching (matchCaloriesRange, matchesRange, matchesCookingTime)
-    // ... (keep the existing helper functions from the previous script)
 
     fetchRecipes();
 
@@ -297,6 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', filterRecipes);
         input.addEventListener('keyup', filterRecipes);
     });
-});</script>
+});
+</script>
 </body>
 </html>
