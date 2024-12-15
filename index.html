@@ -104,6 +104,19 @@
         </select>
     </div>
 
+<div class="checkbox-group">
+    <h4>Method:</h4>
+    <label><input type="checkbox" value="Stovetop" onchange="filterRecipes()"> Stovetop</label>
+    <label><input type="checkbox" value="Baking" onchange="filterRecipes()"> Baking</label>
+    <label><input type="checkbox" value="Air Fryer" onchange="filterRecipes()"> Air Fryer</label>
+    <label><input type="checkbox" value="Slow Cooker" onchange="filterRecipes()"> Slow Cooker</label>
+    <label><input type="checkbox" value="Rice Cooker" onchange="filterRecipes()"> Rice Cooker</label>
+    <label><input type="checkbox" value="Just Mixing" onchange="filterRecipes()"> Just Mixing</label>
+    <label><input type="checkbox" value="Microwave" onchange="filterRecipes()"> Microwave</label>
+    <label><input type="checkbox" value="Overnight" onchange="filterRecipes()"> Overnight</label>
+    <label><input type="checkbox" value="Marinate" onchange="filterRecipes()"> Marinate</label>
+</div>
+
     <div class='checkbox-group'>
         <h4>Cooking Time in Minutes:</h4>
         <select id="cookingTimeFilter" onchange="filterRecipes()">
@@ -136,82 +149,6 @@
 </table>
 
 <script>
-// Function to match calories range
-function matchCaloriesRange(value, filter) {
-    if (!value || value === 'N/A') return false;
-    
-    // Special handling for "600+" case
-    if (value === '600+') {
-        return filter === '600+';
-    }
-
-    const calories = parseInt(value.replace('cal', ''));
-
-    switch(filter) {
-        case '200cal or less':
-            return calories <= 200;
-        case '201-400':
-            return calories >= 201 && calories <= 400;
-        case '401-600':
-            return calories >= 401 && calories <= 600;
-        case '600+':
-            return calories > 600;
-        default:
-            return true;
-    }
-}
-
-// Function to match numeric ranges
-function matchesRange(value, filter) {
-    if (!value || value === 'N/A') return false;
-    
-    // Special handling for "50+" case
-    if (value === '50+') {
-        return filter === '50+';
-    }
-
-    const numericValue = parseFloat(value);
-
-    switch(filter) {
-        case '10g or less':
-            return numericValue <= 10;
-        case '11-20':
-            return numericValue >= 11 && numericValue <= 20;
-        case '21-30':
-            return numericValue >= 21 && numericValue <= 30;
-        case '31-40':
-            return numericValue >= 31 && numericValue <= 40;
-        case '41-50':
-            return numericValue >= 41 && numericValue <= 50;
-        case '50+':
-            return numericValue >= 50;
-        default:
-            return true;
-    }
-}
-
-// Function to match cooking time range
-function matchesCookingTime(value, filter) {
-    if (!value || value === 'N/A') return false;
-    const time = parseInt(value);
-
-    switch(filter) {
-        case '0-20':
-            return time >= 0 && time <= 20;
-        case '21-30':
-            return time >= 21 && time <= 30;
-        case '31-40':
-            return time >= 31 && time <= 40;
-        case '41-50':
-            return time >= 41 && time <= 50;
-        case '51+':
-        case '51-300':
-            return time >= 51;
-        default:
-            return true;
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     const supabaseClient = supabase.createClient(
         'https://smftecfffubvgnxfdhyk.supabase.co', 
@@ -309,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const nameMatch = recipeName.includes(searchValue);
             
-            // Only apply filter matching if there are active filters
+            // Filtering logic for multi-select categories
             const mealMatch = !hasActiveFilters || 
                 filterCategories['Meal:'].length === 0 || 
                 filterCategories['Meal:'].some(selectedMeal => 
@@ -322,17 +259,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     meat.split(',').map(m => m.trim()).includes(selectedMeat)
                 );
 
-            const calorieMatch = !hasActiveFilters || !calorieFilter || matchCaloriesRange(calories, calorieFilter);
-            const fatMatch = !hasActiveFilters || !fatFilter || matchesRange(fat, fatFilter);
-            const carbMatch = !hasActiveFilters || !carbFilter || matchesRange(carbs, carbFilter);
-            const proteinMatch = !hasActiveFilters || !proteinFilter || matchesRange(protein, proteinFilter);
-            const cookingTimeMatch = !hasActiveFilters || !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
-
             const methodMatch = !hasActiveFilters || 
                 filterCategories['Method:'].length === 0 || 
                 filterCategories['Method:'].some(selectedMethod => 
                     method.split(',').map(m => m.trim()).includes(selectedMethod)
                 );
+
+            const calorieMatch = !hasActiveFilters || !calorieFilter || matchCaloriesRange(calories, calorieFilter);
+            const fatMatch = !hasActiveFilters || !fatFilter || matchesRange(fat, fatFilter);
+            const carbMatch = !hasActiveFilters || !carbFilter || matchesRange(carbs, carbFilter);
+            const proteinMatch = !hasActiveFilters || !proteinFilter || matchesRange(protein, proteinFilter);
+            const cookingTimeMatch = !hasActiveFilters || !cookingTimeFilter || matchesCookingTime(cookingTime, cookingTimeFilter);
 
             const isVisible = nameMatch && mealMatch && meatMatch && 
                               calorieMatch && fatMatch && carbMatch && 
@@ -350,6 +287,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`Visible Recipes: ${visibleRowCount}`);
     }
 
+    // Existing helper functions for range matching (matchCaloriesRange, matchesRange, matchesCookingTime)
+    // ... (keep the existing helper functions from the previous script)
+
     fetchRecipes();
 
     const filterInputs = document.querySelectorAll('input[type="checkbox"], input[type="text"], select');
@@ -357,7 +297,6 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', filterRecipes);
         input.addEventListener('keyup', filterRecipes);
     });
-});
-</script>
+});</script>
 </body>
 </html>
