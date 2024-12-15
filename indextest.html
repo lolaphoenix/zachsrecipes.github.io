@@ -155,6 +155,21 @@ document.addEventListener('DOMContentLoaded', function() {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtZnRlY2ZmZnVidmdueGZkaHlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI3OTMzMzgsImV4cCI6MjA0ODM2OTMzOH0.e_3jDB4acpZkY1BQReCeb5RTmfvBZYbAb2GxbaKAA1o'
     );
 
+    function generateRecipeLink(originalLink) {
+        // Check if it's a mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // If it's a mobile device and the link is a Patreon link, modify it
+        if (isMobile && originalLink.includes('patreon.com')) {
+            // Convert web URL to Patreon app deep link
+            // Note: Replace with actual Patreon app deep linking format if different
+            return originalLink.replace('https://www.patreon.com', 'patreon://');
+        }
+        
+        // For non-mobile or non-Patreon links, return the original link
+        return originalLink || '#';
+    }
+
     function fetchRecipes() {
         supabaseClient
             .from('recipes')
@@ -172,6 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 recipes.forEach(recipe => {
                     const row = document.createElement('tr');
+                    const recipeLink = generateRecipeLink(recipe.Link);
+                    
                     row.innerHTML = `
                         <td>${recipe.RecipeName || 'N/A'}</td>
                         <td>${recipe.Meal || 'N/A'}</td>
@@ -182,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${recipe.Protein || 'N/A'}</td>
                         <td>${recipe.Method || 'N/A'}</td>
                         <td>${recipe.CookingTime || 'N/A'}</td>
-                        <td><a href="${recipe.Link || '#'}" target="_blank">View Recipe</a></td>
+                        <td><a href="${recipeLink}" target="_blank">View Recipe</a></td>
                     `;
                     tableBody.appendChild(row);
                 });
